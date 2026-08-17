@@ -39,28 +39,36 @@
   nav button.active{background:var(--accent);border-color:var(--accent);color:#fff}
   main{max-width:920px;margin:0 auto;padding:18px 14px 60px}
   .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:16px}
-  .panel h3{margin:0 0 12px;font-size:15px;display:flex;align-items:center;gap:8px}
+  .panel h3{margin:0 0 12px;font-size:15px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .sec-title{font-size:13px;color:var(--muted);margin:18px 0 8px;padding-top:12px;border-top:1px solid var(--line)}
+  .sec-title:first-of-type{border-top:0;padding-top:0;margin-top:4px}
   .loading{color:var(--muted);font-size:14px;padding:14px 0}
   table{width:100%;border-collapse:collapse;font-size:14px}
   td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
-  td.k{color:var(--muted);width:40%;font-size:13px}
-  .badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;background:var(--panel2);border:1px solid var(--line)}
-  .badge.beta{background:rgba(216,154,58,.15);border-color:var(--warn);color:var(--warn)}
-  img.thumb{max-width:200px;border-radius:10px;border:1px solid var(--line)}
+  td.k{color:var(--muted);width:42%;font-size:13px}
+  .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;background:var(--panel2);border:1px solid var(--line)}
+  .badge.green{background:rgba(47,158,107,.16);border-color:var(--accent);color:var(--accent2)}
+  .badge.red{background:rgba(224,86,86,.15);border-color:var(--danger);color:#f0a0a0}
+  .badge.warn{background:rgba(216,154,58,.15);border-color:var(--warn);color:var(--warn)}
+  .hero{display:flex;flex-direction:column;gap:6px;margin-bottom:6px}
+  .hero .name{font-size:20px;font-weight:800}
+  .hero .en{color:var(--muted);font-size:13px}
+  .hero .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  img.thumb{max-width:220px;border-radius:10px;border:1px solid var(--line);display:block;margin-top:6px}
   .empty{color:var(--muted);font-size:14px;padding:10px 0}
+  .locked{color:var(--warn);font-size:14px;padding:14px;background:rgba(216,154,58,.08);border:1px solid rgba(216,154,58,.3);border-radius:12px}
   .note{font-size:12px;color:var(--warn);background:rgba(216,154,58,.08);border:1px solid rgba(216,154,58,.3);border-radius:10px;padding:9px 11px;margin-bottom:12px}
-  details.raw{margin-top:12px}
+  details.raw{margin-top:14px}
   details.raw summary{color:var(--muted);font-size:12px;cursor:pointer}
   pre{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px;overflow:auto;font-size:12px;direction:ltr;text-align:left}
-  .actions-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  .actions-row{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 14px}
   .item{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px}
   .item .top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
-  /* modal */
   .overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:grid;place-items:center;z-index:20;padding:16px}
-  .modal{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px;width:100%;max-width:440px;max-height:90vh;overflow:auto}
+  .modal{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px;width:100%;max-width:460px;max-height:90vh;overflow:auto}
   .modal h3{margin:0 0 4px;font-size:17px}
   .modal .close{float:left;background:none;border:0;color:var(--muted);font-size:20px;cursor:pointer}
-  .step{display:flex;gap:6px;margin-bottom:14px}
+  .step{display:flex;gap:6px;margin:8px 0 14px}
   .step span{flex:1;height:4px;border-radius:2px;background:var(--line)}
   .step span.on{background:var(--accent)}
 </style>
@@ -99,67 +107,60 @@
 const BASE = "https://api.syriadent.org.sy";
 const $ = s => document.querySelector(s);
 let TOKEN = localStorage.getItem("sd_token") || "";
+let PROFILE = null; // cached doctor/profile.data
 
-// read tabs (GET + generic render). action tabs are handled specially by id.
 const TABS = [
-  { id:"profile",  label:"الملف الشخصي", path:"doctor/profile", action:"profile" },
-  { id:"idcard",   label:"البطاقة",       path:"doctor/id_card" },
-  { id:"status",   label:"حالة الحساب",   path:"doctor/status" },
-  { id:"certs",    label:"الشهادات",      path:"certificate/doctor" },
-  { id:"invoices", label:"الفواتير",      path:"doctors/invoices", action:"invoices" },
-  { id:"payments", label:"المدفوعات",     path:"doctors/payments/" },
-  { id:"transfer", label:"نقل الفرع",     path:"branch-transfer/my", action:"transfer" },
-  { id:"notifs",   label:"الإشعارات",     path:"notifications/actions" },
-  { id:"directory",label:"دليل الأطباء",  path:"doctor/all" },
-  { id:"security", label:"الأمان",        action:"security" },
+  { id:"profile",   label:"الملف الشخصي", render:renderProfile },
+  { id:"status",    label:"حالة الحساب",   render:t=>renderGet(t,"doctor/status") },
+  { id:"certs",     label:"الشهادات",      render:renderCerts },
+  { id:"invoices",  label:"الفواتير",      render:renderInvoices },
+  { id:"payments",  label:"المدفوعات",     render:t=>renderGet(t,"doctor/payments") },
+  { id:"transfer",  label:"نقل الفرع",     render:renderTransfer },
+  { id:"directory", label:"دليل الأطباء",  render:t=>renderGet(t,"doctor/all") },
+  { id:"security",  label:"الأمان",        render:renderSecurity },
 ];
 
-// ---- core fetch helpers ----
-async function req(path, {method="GET", body=null, auth=true}={}){
-  const res = await fetch(`${BASE}/${path}`, {
+// ---- core fetch ----
+async function req(path,{method="GET",body=null,auth=true}={}){
+  const res=await fetch(`${BASE}/${path}`,{
     method,
-    headers:{ "Content-Type":"application/json", ...(auth&&TOKEN?{Authorization:`Bearer ${TOKEN}`}:{}) },
-    body: body!=null ? JSON.stringify(body) : null,
+    headers:{"Content-Type":"application/json",...(auth&&TOKEN?{Authorization:`Bearer ${TOKEN}`}:{})},
+    body: body!=null?JSON.stringify(body):null,
   });
   let data=null; try{ data=await res.json(); }catch{}
   return { status:res.status, ok:res.ok, data };
 }
-async function api(path){ // GET protected, unwrap envelope
-  const r = await req(path);
+async function api(path){
+  const r=await req(path);
   if(r.status===401){ logout("انتهت الجلسة، سجّل الدخول من جديد"); throw new Error("401"); }
-  if(!r.ok) throw new Error(msgOf(r.data) || `HTTP ${r.status}`);
+  if(!r.ok){ const e=new Error(msgOf(r.data)||`HTTP ${r.status}`); e.status=r.status; e.raw=r.data; throw e; }
   return r.data;
 }
-// write op: tries POST then PATCH then PUT until the route accepts the method (skips 404/405)
-async function writeOp(path, body){
+async function writeOp(path,body){ // try methods, skip route/permission-neutral 404/405
   let last=null;
-  for(const m of ["POST","PATCH","PUT"]){
-    const r = await req(path,{method:m, body});
-    last=r;
-    if(r.status!==404 && r.status!==405) break;
-  }
+  for(const m of ["POST","PATCH","PUT"]){ const r=await req(path,{method:m,body}); last=r; if(r.status!==404&&r.status!==405) break; }
   return last;
 }
 function msgOf(d){ const m=d&&d.message; return Array.isArray(m)?m.join("، "):(m||""); }
+function pick(o,keys){ if(!o) return null; for(const k of keys) if(o[k]!=null) return o[k]; return null; }
 
 // ---- login ----
-$("#loginForm").addEventListener("submit", async e=>{
+$("#loginForm").addEventListener("submit",async e=>{
   e.preventDefault();
-  const msg=$("#loginMsg"), btn=$("#loginBtn");
+  const msg=$("#loginMsg"),btn=$("#loginBtn");
   msg.className="msg"; msg.textContent=""; btn.disabled=true; btn.textContent="جارٍ الدخول…";
   try{
-    const r = await req("auth/login",{method:"POST",auth:false,body:{user_name:$("#u").value.trim(),password:$("#p").value}});
+    const r=await req("auth/login",{method:"POST",auth:false,body:{user_name:$("#u").value.trim(),password:$("#p").value}});
     if(!r.ok) throw new Error(msgOf(r.data)||"فشل الدخول");
-    const tok = pick(r.data,["accessToken","access_token"]) || pick(r.data&&r.data.data,["accessToken","access_token"]);
+    const d=r.data&&r.data.data||{};
+    const tok=pick(d,["access_token","accessToken"])||pick(r.data,["access_token","accessToken"]);
     if(!tok) throw new Error("لم يصل رمز الدخول من الخادم");
     TOKEN=tok; localStorage.setItem("sd_token",TOKEN); enterApp();
   }catch(err){ msg.classList.add("err"); msg.textContent=err.message; }
   finally{ btn.disabled=false; btn.textContent="دخول"; }
 });
-function pick(o,keys){ if(!o) return null; for(const k of keys) if(o[k]!=null) return o[k]; return null; }
-
 function logout(note){
-  TOKEN=""; localStorage.removeItem("sd_token");
+  TOKEN=""; PROFILE=null; localStorage.removeItem("sd_token");
   $("#app").classList.add("hidden"); $("#login").classList.remove("hidden");
   const m=$("#loginMsg"); m.className="msg"+(note?" err":""); m.textContent=note||"";
 }
@@ -170,246 +171,310 @@ function enterApp(){
   $("#login").classList.add("hidden"); $("#app").classList.remove("hidden");
   const nav=$("#tabs"); nav.innerHTML="";
   TABS.forEach((t,i)=>{
-    const b=document.createElement("button"); b.textContent=t.label;
-    b.onclick=()=>{ [...nav.children].forEach(c=>c.classList.remove("active")); b.classList.add("active"); openTab(t); };
+    const b=btnRaw(t.label,"tabbtn");
+    b.onclick=()=>{ [...nav.children].forEach(c=>c.classList.remove("active")); b.classList.add("active"); runTab(t); };
     nav.appendChild(b);
-    if(i===0){ b.classList.add("active"); openTab(t); }
+    if(i===0){ b.classList.add("active"); runTab(t); }
   });
 }
-async function openTab(t){
-  if(t.action==="security") return renderSecurity();
+async function runTab(t){
   const view=$("#view");
   view.innerHTML=`<div class="panel"><h3>${t.label}</h3><div class="loading">جارٍ التحميل…</div></div>`;
-  try{
-    const body = await api(t.path);
-    const data = (body&&"data"in body)?body.data:body;
-    view.innerHTML="";
-    const panel=el("div","panel");
-    panel.appendChild(hdr(t.label));
-    if(t.action==="profile") panel.appendChild(profileActions(data));
-    if(t.action==="transfer") panel.appendChild(transferActions());
-    if(data==null||(Array.isArray(data)&&!data.length)) panel.appendChild(elText("div","empty","لا توجد بيانات"));
-    else if(t.action==="invoices") panel.appendChild(invoiceList(data));
-    else panel.appendChild(render(data));
-    panel.appendChild(rawBlock(body));
-    view.appendChild(panel);
-  }catch(err){ if(err.message!=="401") $("#view").innerHTML=`<div class="panel">${hdr(t.label).outerHTML}<div class="empty">تعذّر التحميل: ${esc(err.message)}</div></div>`; }
+  try{ await t.render(t); }
+  catch(err){ if(err.message!=="401") view.innerHTML=panelErr(t.label,err); }
 }
 
-// ---- profile view + edit ----
-function profileActions(data){
-  const wrap=el("div","actions-row");
-  const b=btn("تعديل البيانات","sm sec");
-  b.onclick=()=>openEditProfile(data&&data.data?data.data:data);
-  wrap.appendChild(b);
-  return wrap;
+// ---- generic GET tab (status, payments, directory) ----
+async function renderGet(t,path){
+  const body=await api(path);
+  const data=(body&&"data"in body)?body.data:body;
+  const p=panel(t.label);
+  if(data==null||(Array.isArray(data)&&!data.length)) p.appendChild(elText("div","empty","لا توجد بيانات"));
+  else p.appendChild(render(data));
+  p.appendChild(rawBlock(body));
+  show(p);
 }
-function openEditProfile(profile){
-  const scalars=Object.entries(profile||{}).filter(([k,v])=>v==null||["string","number","boolean"].includes(typeof v));
-  const body=el("div");
-  body.appendChild(elText("div","note","تعديل البيانات يستخدم مسار doctor/update. عدّل الحقول ثم احفظ. إن رفض الخادم حقلاً سيظهر سبب الرفض بالأسفل."));
-  const inputs={};
-  scalars.forEach(([k,v])=>{
-    const l=document.createElement("label"); l.textContent=prettyKey(k);
-    const inp=document.createElement("input"); inp.value=v==null?"":v; inputs[k]=inp;
-    body.append(l,inp);
-  });
-  modal("تعديل الملف الشخصي", body, async (setMsg)=>{
-    const changed={};
-    scalars.forEach(([k])=>{ const nv=inputs[k].value; if(String(nv)!==String(profile[k]==null?"":profile[k])) changed[k]=nv; });
-    if(!Object.keys(changed).length){ setMsg("لم تُعدّل أي حقل","err"); return false; }
-    const r=await writeOp("doctor/update",changed);
-    setMsg(r.ok?"تم الحفظ":("تعذّر الحفظ: "+(msgOf(r.data)||("HTTP "+r.status))), r.ok?"ok":"err", r.data);
-    if(r.ok) openTab(TABS.find(t=>t.id==="profile"));
-    return r.ok;
-  },"حفظ");
+
+// ---- profile (curated) ----
+async function renderProfile(t){
+  const body=await api("doctor/profile");
+  PROFILE=body.data||{}; const d=PROFILE;
+  const p=panel("الملف الشخصي");
+  // hero
+  const hero=el("div","hero");
+  hero.appendChild(elText("div","name",[d.first_name,d.father_name,d.last_name].filter(Boolean).join(" ")||d.user&&d.user.full_name||""));
+  if(d.english_full_name) hero.appendChild(elText("div","en",d.english_full_name));
+  const chips=el("div","chips");
+  if(d.syndicate_number!=null) chips.appendChild(elText("span","badge","رقم النقابة: "+d.syndicate_number));
+  if(d.current_branch_name) chips.appendChild(elText("span","badge","الفرع: "+d.current_branch_name));
+  if(d.subscription_status) chips.appendChild(elText("span","badge "+(d.subscription_status.includes("غير")?"red":"green"),"الاشتراك: "+d.subscription_status));
+  const acct=d.branches&&d.branches[0]&&d.branches[0].status;
+  if(acct) chips.appendChild(elText("span","badge "+statusColor(acct),"الحساب: "+arStatus(acct)));
+  hero.appendChild(chips); p.appendChild(hero);
+  p.appendChild(profileActions());
+
+  // personal
+  p.appendChild(elText("div","sec-title","المعلومات الشخصية"));
+  p.appendChild(kvTable([
+    ["اسم الأب",d.father_name],["اسم الأم",d.mother_name],["الرقم الوطني",d.national_number],
+    ["تاريخ الميلاد",fmtDate(d.birth_date)],["الجنس",d.gender===true?"ذكر":d.gender===false?"أنثى":null],
+    ["زمرة الدم",d.blood_type],["الجنسية",d.Nationality&&d.Nationality.name],["مكان الولادة",d.city_of_birth],
+    ["الحالة الاجتماعية",d.social_status],["عدد الأولاد",d.number_of_children],
+    ["العنوان",d.address],["القيد المدني",d.civil_registry],
+  ]));
+
+  // certificates
+  if(d.certificates&&d.certificates.length){
+    p.appendChild(elText("div","sec-title","الشهادات"));
+    d.certificates.forEach(c=>p.appendChild(certCard(c)));
+  }
+  // licenses
+  if(d.licenses&&d.licenses.length){
+    p.appendChild(elText("div","sec-title","الإجازات"));
+    d.licenses.forEach(l=>p.appendChild(kvTable([
+      ["النوع",l.type],["التاريخ",fmtDate(l.date)],["رقم الإصدار",l.issue_number],["الصورة",photoLink(l.photo_url)],
+    ])));
+  }
+  // contacts
+  if(d.contacts&&d.contacts.length){
+    p.appendChild(elText("div","sec-title","وسائل الاتصال"));
+    p.appendChild(kvTable(d.contacts.map(c=>[c.contact_type||"اتصال",c.contact_info])));
+  }
+  // branch + id photos
+  p.appendChild(elText("div","sec-title","الفرع والبطاقة"));
+  const bnode=d.branches&&d.branches[0];
+  p.appendChild(kvTable([
+    ["الفرع الحالي",d.current_branch_name],
+    ["حالة التسجيل",bnode&&arStatus(bnode.status)],
+    ["سبب الرفض",bnode&&bnode.refuse_cause],
+    ["صورة الهوية (أمام)",photoLink(d.id_card_photo_front_url)],
+    ["صورة الهوية (خلف)",photoLink(d.id_card_photo_back_url)],
+  ]));
+  p.appendChild(elText("div","note","ملاحظة: صور الهوية والبطاقة قد لا تفتح إذا لم يعتمد الفرع حسابك بعد (الخادم يقيّد الوصول إليها)."));
+  p.appendChild(rawBlock(body));
+  show(p);
+}
+function profileActions(){
+  const row=el("div","actions-row");
+  const b=btnRaw("تعديل البيانات","btn sm sec"); b.onclick=()=>openEditProfile(PROFILE); row.appendChild(b);
+  return row;
+}
+function certCard(c){
+  return kvTable([
+    ["النوع",c.certificate&&c.certificate.certificate_name],
+    ["الاختصاص",c.specialization&&c.specialization.name],
+    ["الجهة",c.source],["رقم الشهادة",c.certificate_number],
+    ["تاريخ التخرج",fmtDate(c.graduation_date)],["الصورة",photoLink(c.photo_url)],
+  ],"item");
+}
+
+// ---- certificates tab (from profile) ----
+async function renderCerts(t){
+  if(!PROFILE){ const b=await api("doctor/profile"); PROFILE=b.data||{}; }
+  const p=panel("الشهادات");
+  const cs=PROFILE.certificates||[];
+  if(!cs.length) p.appendChild(elText("div","empty","لا توجد شهادات"));
+  else cs.forEach(c=>p.appendChild(certCard(c)));
+  show(p);
 }
 
 // ---- invoices + pay ----
-function invoiceList(data){
-  const arr=Array.isArray(data)?data:(data.items||data.invoices||[data]);
-  const wrap=el("div");
-  wrap.appendChild(elText("div","note","الدفع (بيتا): يستخدم set-payment-initiation و bbsf-payment مع رمز تحقق OTP. جرّبه، وإن اختلفت الحقول أرسِل لي الاستجابة الخام من الأسفل لأضبطه."));
+async function renderInvoices(t){
+  const body=await api("doctors/invoices");
+  const wrap=(body&&body.data)||{};
+  const arr=Array.isArray(wrap)?wrap:(wrap.data||[]);
+  const p=panel("الفواتير");
+  if(wrap.total!=null) p.appendChild(elText("div","badge","الإجمالي: "+wrap.total));
+  if(!arr.length){ p.appendChild(elText("div","empty","لا توجد فواتير حالياً")); p.appendChild(rawBlock(body)); return show(p); }
+  p.appendChild(elText("div","note","الدفع تجريبي: يستخدم set-payment-initiation و payment-invoice مع رمز OTP. إن اختلفت الحقول ستظهر الاستجابة الخام لأضبطه."));
   arr.forEach(inv=>{
-    const it=el("div","item");
-    const top=el("div","top");
-    top.appendChild(elText("div","",`فاتورة ${esc(String(pick(inv,["invoice_id","id","invoiceId","number"])??""))}`));
-    const amt=pick(inv,["amount","total","value"]);
-    const pb=btn("دفع","sm"); pb.onclick=()=>openPay(inv);
-    const right=el("div"); if(amt!=null) right.appendChild(elText("span","badge",`${esc(String(amt))}`));
-    top.appendChild(right);
-    it.appendChild(top);
-    it.appendChild(render(inv));
-    it.appendChild(pb);
-    wrap.appendChild(it);
+    const it=el("div","item"); const top=el("div","top");
+    top.appendChild(elText("div","","فاتورة "+(pick(inv,["invoice_id","id","number"])??"")));
+    const amt=pick(inv,["amount","total","value"]); const right=el("div");
+    if(amt!=null) right.appendChild(elText("span","badge",String(amt))); top.appendChild(right);
+    it.appendChild(top); it.appendChild(render(inv));
+    const pb=btnRaw("دفع","btn sm"); pb.onclick=()=>openPay(inv); it.appendChild(pb);
+    p.appendChild(it);
   });
-  return wrap;
-}
-function openPay(inv){
-  const invId=pick(inv,["invoice_id","id","invoiceId","number"]);
-  const body=el("div");
-  body.appendChild(elText("div","note","تدفّق تجريبي. اختر طريقة الدفع وأدخل رقم الموبايل ثم أرسِل، وأدخل رمز التحقق إن طُلب."));
-  const lMethod=document.createElement("label"); lMethod.textContent="طريقة الدفع";
-  const sel=document.createElement("select");
-  [["sham_cash","شام كاش"],["bemo_bank","بنك بيمو"]].forEach(([v,t])=>{const o=document.createElement("option");o.value=v;o.textContent=t;sel.appendChild(o);});
-  const lPhone=document.createElement("label"); lPhone.textContent="رقم الموبايل";
-  const phone=document.createElement("input"); phone.placeholder="09xxxxxxxx";
-  const otpWrap=el("div","hidden");
-  const lOtp=document.createElement("label"); lOtp.textContent="رمز التحقق (OTP)";
-  const otp=document.createElement("input"); otpWrap.append(lOtp,otp);
-  body.append(lMethod,sel,lPhone,phone,otpWrap);
-  modal("دفع فاتورة "+(invId??""), body, async (setMsg)=>{
-    if(otpWrap.classList.contains("hidden")){
-      const r=await writeOp("set-payment-initiation",{invoice_id:invId,payment_method:sel.value,phone:phone.value.trim()});
-      setMsg(r.ok?"تم إرسال طلب الدفع، أدخل رمز التحقق":("تعذّر البدء: "+(msgOf(r.data)||("HTTP "+r.status))), r.ok?"ok":"err", r.data);
-      if(r.ok) otpWrap.classList.remove("hidden");
-      return false; // keep modal open for OTP
-    } else {
-      const r=await writeOp("payment-invoice",{invoice_id:invId,payment_method:sel.value,phone:phone.value.trim(),otp:otp.value.trim()});
-      setMsg(r.ok?"تم تأكيد الدفع":("تعذّر التأكيد: "+(msgOf(r.data)||("HTTP "+r.status))), r.ok?"ok":"err", r.data);
-      return r.ok;
-    }
-  },"إرسال");
+  p.appendChild(rawBlock(body)); show(p);
 }
 
 // ---- branch transfer ----
-function transferActions(){
-  const wrap=el("div","actions-row");
-  const b=btn("طلب نقل فرع","sm sec"); b.onclick=openTransfer; wrap.appendChild(b);
-  return wrap;
+async function renderTransfer(t){
+  const body=await api("branch-transfer/my");
+  const data=(body&&"data"in body)?body.data:body;
+  const p=panel("نقل الفرع");
+  const row=el("div","actions-row"); const b=btnRaw("طلب نقل فرع","btn sm sec"); b.onclick=openTransfer; row.appendChild(b); p.appendChild(row);
+  if(data==null||(Array.isArray(data)&&!data.length)) p.appendChild(elText("div","empty","لا توجد طلبات نقل"));
+  else p.appendChild(render(data));
+  p.appendChild(rawBlock(body)); show(p);
 }
 async function openTransfer(){
   const body=el("div");
-  body.appendChild(elText("div","note","اختر الفرع المطلوب النقل إليه. يستخدم branch-transfer/available-branches ثم branch-transfer."));
-  const l=document.createElement("label"); l.textContent="الفرع"; const sel=document.createElement("select");
-  sel.innerHTML=`<option>جارٍ التحميل…</option>`;
+  body.appendChild(elText("div","note","اختر الفرع المطلوب النقل إليه."));
+  const l=document.createElement("label"); l.textContent="الفرع"; const sel=document.createElement("select"); sel.innerHTML=`<option>جارٍ التحميل…</option>`;
   const lNote=document.createElement("label"); lNote.textContent="ملاحظة (اختياري)"; const note=document.createElement("input");
   body.append(l,sel,lNote,note);
   try{
     const b=await api("branch-transfer/available-branches");
-    const arr=(b&&b.data)?b.data:b; sel.innerHTML="";
-    (Array.isArray(arr)?arr:[]).forEach(x=>{const o=document.createElement("option");o.value=pick(x,["id","branch_id"])??"";o.textContent=pick(x,["name","title","branch_name"])??JSON.stringify(x);sel.appendChild(o);});
+    const d=(b&&b.data)||{}; const list=d.available_branches||(Array.isArray(d)?d:[]);
+    sel.innerHTML="";
+    list.forEach(x=>{ const o=document.createElement("option"); o.value=pick(x,["branch_id","id"])??""; o.textContent=pick(x,["branch_name","name"])??JSON.stringify(x); sel.appendChild(o); });
     if(!sel.children.length) sel.innerHTML=`<option value="">لا توجد فروع متاحة</option>`;
-  }catch(e){ sel.innerHTML=`<option value="">تعذّر تحميل الفروع</option>`; }
-  modal("طلب نقل فرع", body, async (setMsg)=>{
-    const r=await writeOp("branch-transfer",{branch_id:sel.value, note:note.value.trim()});
-    setMsg(r.ok?"تم إرسال الطلب":("تعذّر الإرسال: "+(msgOf(r.data)||("HTTP "+r.status))), r.ok?"ok":"err", r.data);
-    if(r.ok) openTab(TABS.find(t=>t.id==="transfer"));
+  }catch(e){ sel.innerHTML=`<option value="">${esc(friendly(e))}</option>`; }
+  modal("طلب نقل فرع",body,async setMsg=>{
+    const r=await writeOp("branch-transfer",{branch_id:Number(sel.value)||sel.value,note:note.value.trim()});
+    setMsg(r.ok?"تم إرسال الطلب":("تعذّر الإرسال: "+(msgOf(r.data)||("HTTP "+r.status))),r.ok?"ok":"err",r.data);
+    if(r.ok) runTab(TABS.find(x=>x.id==="transfer"));
     return r.ok;
   },"إرسال الطلب");
 }
 
-// ---- security: change password ----
-function renderSecurity(){
-  const view=$("#view"); view.innerHTML="";
-  const panel=el("div","panel"); panel.appendChild(hdr("الأمان"));
-  const b=btn("تغيير كلمة المرور","sm sec"); b.onclick=openChangePw;
-  panel.appendChild(b); view.appendChild(panel);
+// ---- edit profile ----
+function openEditProfile(profile){
+  const scalars=Object.entries(profile||{}).filter(([k,v])=>v==null||["string","number","boolean"].includes(typeof v))
+    .filter(([k])=>!["doctor_id","user_id","syndicate_number","created_at","updated_at","photo_url","id_card_photo_front_url","id_card_photo_back_url","current_branch_name","subscription_status","nationality_id","governorate_id"].includes(k));
+  const body=el("div");
+  body.appendChild(elText("div","note","تعديل عبر doctor/update. عدّل ما تريد ثم احفظ؛ إن رفض الخادم حقلاً سيظهر السبب."));
+  const inputs={};
+  scalars.forEach(([k,v])=>{ const l=document.createElement("label"); l.textContent=prettyKey(k); const inp=document.createElement("input"); inp.value=v==null?"":v; inputs[k]=inp; body.append(l,inp); });
+  modal("تعديل الملف الشخصي",body,async setMsg=>{
+    const changed={}; scalars.forEach(([k])=>{ const nv=inputs[k].value; if(String(nv)!==String(profile[k]==null?"":profile[k])) changed[k]=nv; });
+    if(!Object.keys(changed).length){ setMsg("لم تُعدّل أي حقل","err"); return false; }
+    const r=await writeOp("doctor/update",changed);
+    setMsg(r.ok?"تم الحفظ":("تعذّر الحفظ: "+(msgOf(r.data)||("HTTP "+r.status))),r.ok?"ok":"err",r.data);
+    if(r.ok){ PROFILE=null; runTab(TABS.find(x=>x.id==="profile")); }
+    return r.ok;
+  },"حفظ");
+}
+
+// ---- payment (beta) ----
+function openPay(inv){
+  const invId=pick(inv,["invoice_id","id","number"]);
+  const body=el("div");
+  body.appendChild(elText("div","note","تدفّق تجريبي: أدخِل الطريقة والموبايل ثم أرسِل، وأدخل رمز التحقق إن طُلب."));
+  const lM=document.createElement("label"); lM.textContent="طريقة الدفع"; const sel=document.createElement("select");
+  [["sham_cash","شام كاش"],["bemo_bank","بنك بيمو"]].forEach(([v,t])=>{const o=document.createElement("option");o.value=v;o.textContent=t;sel.appendChild(o);});
+  const lP=document.createElement("label"); lP.textContent="رقم الموبايل"; const phone=document.createElement("input"); phone.placeholder="09xxxxxxxx";
+  const otpWrap=el("div","hidden"); const lO=document.createElement("label"); lO.textContent="رمز التحقق (OTP)"; const otp=document.createElement("input"); otpWrap.append(lO,otp);
+  body.append(lM,sel,lP,phone,otpWrap);
+  modal("دفع فاتورة "+(invId??""),body,async setMsg=>{
+    if(otpWrap.classList.contains("hidden")){
+      const r=await writeOp("set-payment-initiation",{invoice_id:invId,payment_method:sel.value,phone:phone.value.trim()});
+      setMsg(r.ok?"تم البدء، أدخل رمز التحقق":("تعذّر البدء: "+(msgOf(r.data)||("HTTP "+r.status))),r.ok?"ok":"err",r.data);
+      if(r.ok) otpWrap.classList.remove("hidden");
+      return false;
+    }
+    const r=await writeOp("payment-invoice",{invoice_id:invId,payment_method:sel.value,phone:phone.value.trim(),otp:otp.value.trim()});
+    setMsg(r.ok?"تم تأكيد الدفع":("تعذّر التأكيد: "+(msgOf(r.data)||("HTTP "+r.status))),r.ok?"ok":"err",r.data);
+    return r.ok;
+  },"إرسال");
+}
+
+// ---- security ----
+async function renderSecurity(t){
+  const p=panel("الأمان");
+  const b=btnRaw("تغيير كلمة المرور","btn sm sec"); b.onclick=openChangePw; p.appendChild(b); show(p);
 }
 function openChangePw(){
   const body=el("div");
-  const l1=document.createElement("label"); l1.textContent="كلمة المرور الحالية"; const oldp=document.createElement("input"); oldp.type="password";
-  const l2=document.createElement("label"); l2.textContent="كلمة المرور الجديدة"; const newp=document.createElement("input"); newp.type="password";
-  const l3=document.createElement("label"); l3.textContent="تأكيد كلمة المرور"; const conf=document.createElement("input"); conf.type="password";
-  body.append(l1,oldp,l2,newp,l3,conf);
-  modal("تغيير كلمة المرور", body, async (setMsg)=>{
-    if(newp.value!==conf.value){ setMsg("كلمتا المرور غير متطابقتين","err"); return false; }
-    const r=await writeOp("user/password",{old_password:oldp.value,new_password:newp.value,confirm_password:conf.value});
-    setMsg(r.ok?"تم تغيير كلمة المرور":("تعذّر التغيير: "+(msgOf(r.data)||("HTTP "+r.status))), r.ok?"ok":"err", r.data);
+  const l1=document.createElement("label"); l1.textContent="كلمة المرور الحالية"; const o=document.createElement("input"); o.type="password";
+  const l2=document.createElement("label"); l2.textContent="كلمة المرور الجديدة"; const n=document.createElement("input"); n.type="password";
+  const l3=document.createElement("label"); l3.textContent="تأكيد كلمة المرور"; const c=document.createElement("input"); c.type="password";
+  body.append(l1,o,l2,n,l3,c);
+  modal("تغيير كلمة المرور",body,async setMsg=>{
+    if(n.value!==c.value){ setMsg("كلمتا المرور غير متطابقتين","err"); return false; }
+    const r=await writeOp("user/password",{old_password:o.value,new_password:n.value,confirm_password:c.value});
+    setMsg(r.ok?"تم التغيير":("تعذّر التغيير: "+(msgOf(r.data)||("HTTP "+r.status))),r.ok?"ok":"err",r.data);
     return r.ok;
   },"تغيير");
 }
 
-// ---- forgot password (OTP flow) ----
+// ---- forgot password ----
 $("#forgotLink").addEventListener("click",openForgot);
 function openForgot(){
-  let stage=0, resetToken="";
+  let stage=0,resetToken="";
   const body=el("div");
   const steps=el("div","step"); steps.innerHTML=`<span class="on"></span><span></span><span></span>`;
   const l1=document.createElement("label"); l1.textContent="اسم المستخدم"; const uname=document.createElement("input");
   const otpWrap=el("div","hidden"); const lo=document.createElement("label"); lo.textContent="رمز التحقق (OTP)"; const otp=document.createElement("input"); otpWrap.append(lo,otp);
   const pwWrap=el("div","hidden");
   const lp=document.createElement("label"); lp.textContent="كلمة المرور الجديدة"; const np=document.createElement("input"); np.type="password";
-  const lc=document.createElement("label"); lc.textContent="تأكيد كلمة المرور"; const cp=document.createElement("input"); cp.type="password";
-  pwWrap.append(lp,np,lc,cp);
+  const lc=document.createElement("label"); lc.textContent="تأكيد كلمة المرور"; const cp=document.createElement("input"); cp.type="password"; pwWrap.append(lp,np,lc,cp);
   body.append(steps,l1,uname,otpWrap,pwWrap);
-  const m=modal("استعادة كلمة المرور", body, async (setMsg)=>{
+  const m=modal("استعادة كلمة المرور",body,async setMsg=>{
     if(stage===0){
       const r=await writeOp("auth/password-recovery/send-otp",{user_name:uname.value.trim()});
-      setMsg(r.ok?"تم إرسال الرمز":("تعذّر الإرسال: "+(msgOf(r.data)||("HTTP "+r.status))), r.ok?"ok":"err", r.data);
+      setMsg(r.ok?"تم إرسال الرمز":("تعذّر الإرسال: "+(msgOf(r.data)||("HTTP "+r.status))),r.ok?"ok":"err",r.data);
       if(r.ok){ stage=1; otpWrap.classList.remove("hidden"); steps.children[1].classList.add("on"); m.setBtn("تحقق"); }
       return false;
     }
     if(stage===1){
       const r=await writeOp("auth/password-recovery/verify-otp",{user_name:uname.value.trim(),otp:otp.value.trim()});
-      resetToken = pick(r.data,["reset_token"]) || pick(r.data&&r.data.data,["reset_token"]) || "";
-      setMsg(r.ok?"تم التحقق، أدخل كلمة المرور الجديدة":("رمز غير صحيح: "+(msgOf(r.data)||("HTTP "+r.status))), r.ok?"ok":"err", r.data);
+      resetToken=pick(r.data,["reset_token"])||pick(r.data&&r.data.data,["reset_token"])||"";
+      setMsg(r.ok?"تم التحقق، أدخل كلمة مرور جديدة":("رمز غير صحيح: "+(msgOf(r.data)||("HTTP "+r.status))),r.ok?"ok":"err",r.data);
       if(r.ok){ stage=2; pwWrap.classList.remove("hidden"); steps.children[2].classList.add("on"); m.setBtn("حفظ"); }
       return false;
     }
     if(np.value!==cp.value){ setMsg("كلمتا المرور غير متطابقتين","err"); return false; }
     const r=await writeOp("auth/password-recovery/reset-password",{reset_token:resetToken,new_password:np.value,confirm_password:cp.value,user_name:uname.value.trim()});
-    setMsg(r.ok?"تم تغيير كلمة المرور، يمكنك الدخول الآن":("تعذّر: "+(msgOf(r.data)||("HTTP "+r.status))), r.ok?"ok":"err", r.data);
+    setMsg(r.ok?"تم تغيير كلمة المرور، يمكنك الدخول":("تعذّر: "+(msgOf(r.data)||("HTTP "+r.status))),r.ok?"ok":"err",r.data);
     return r.ok;
   },"إرسال الرمز");
 }
 
-// ---- generic renderer ----
+// ---- renderers/helpers ----
+function kvTable(rows,cls){
+  const box=el("div",cls||""); const t=document.createElement("table");
+  rows.forEach(([k,v])=>{ if(v==null||v==="") return; const tr=document.createElement("tr");
+    const a=document.createElement("td"); a.className="k"; a.textContent=k;
+    const b=document.createElement("td"); b.appendChild(v instanceof Node?v:elText("span","",String(v)));
+    tr.append(a,b); t.appendChild(tr); });
+  if(!t.children.length) return elText("div","empty","لا توجد بيانات");
+  box.appendChild(t); return box;
+}
+function photoLink(u){ if(!u) return null; const abs=u.startsWith("http")?u:BASE+"/"+u.replace(/^\/+/,""); const a=document.createElement("a"); a.href=abs; a.target="_blank"; a.textContent="فتح الصورة"; return a; }
 function render(v){
-  if(Array.isArray(v)){
-    const wrap=el("div"); if(!v.length){ return elText("div","empty","لا توجد عناصر"); }
-    v.forEach((item,i)=>{ const c=el("div","item"); c.appendChild(elText("div","badge",`#${i+1}`)); c.appendChild(render(item)); wrap.appendChild(c); });
-    return wrap;
-  }
-  if(v&&typeof v==="object"){
-    const t=document.createElement("table");
-    for(const [k,val] of Object.entries(v)){
-      const tr=document.createElement("tr");
-      const a=document.createElement("td"); a.className="k"; a.textContent=prettyKey(k);
-      const b=document.createElement("td"); b.appendChild(leaf(k,val));
-      tr.append(a,b); t.appendChild(tr);
-    }
-    return t;
-  }
+  if(Array.isArray(v)){ if(!v.length) return elText("div","empty","لا توجد عناصر"); const w=el("div"); v.forEach((it,i)=>{ const c=el("div","item"); c.appendChild(elText("div","badge","#"+(i+1))); c.appendChild(render(it)); w.appendChild(c); }); return w; }
+  if(v&&typeof v==="object"){ const t=document.createElement("table"); for(const [k,val] of Object.entries(v)){ const tr=document.createElement("tr"); const a=document.createElement("td"); a.className="k"; a.textContent=prettyKey(k); const b=document.createElement("td"); b.appendChild(leaf(k,val)); tr.append(a,b); t.appendChild(tr); } return t; }
   return leaf("",v);
 }
 function leaf(key,val){
   if(val==null) return elText("span","empty","—");
   if(typeof val==="object") return render(val);
   const s=String(val), abs=s.startsWith("/")?BASE+s:s;
-  const isImg=/\.(png|jpe?g|webp|gif)$/i.test(s) && /^(https?:|\/)/i.test(s);
-  const isUrl=/^https?:\/\//i.test(s)||/^\/[\w./%-]+$/.test(s);
-  if(isImg){ const im=document.createElement("img"); im.className="thumb"; im.src=abs; im.alt=key; return im; }
-  if(isUrl){ const a=document.createElement("a"); a.href=abs; a.target="_blank"; a.textContent=s; return a; }
+  if(/\.(png|jpe?g|webp|gif)$/i.test(s)&&/^(https?:|\/)/i.test(s)){ const a=document.createElement("a"); a.href=abs; a.target="_blank"; a.textContent="فتح الصورة"; return a; }
+  if(/^https?:\/\//i.test(s)){ const a=document.createElement("a"); a.href=s; a.target="_blank"; a.textContent=s; return a; }
+  if(/^\d{4}-\d\d-\d\dT/.test(s)) return elText("span","",fmtDate(s));
   return elText("span","",s);
 }
+function fmtDate(s){ return (typeof s==="string"&&/^\d{4}-\d\d-\d\d/.test(s))?s.slice(0,10):(s==null?"":String(s)); }
+function arStatus(s){ return ({Accepted:"مقبول",Refused:"مرفوض",Pending:"قيد المعالجة",Rejected:"مرفوض"})[s]||s; }
+function statusColor(s){ return s==="Accepted"?"green":(s==="Refused"||s==="Rejected")?"red":"warn"; }
+function friendly(e){ const st=e&&e.status; if(st===403||st===405) return "هذه الميزة متاحة بعد اعتماد حسابك من الفرع"; if(st===404) return "غير متاح حالياً"; return e&&e.message||"خطأ"; }
+function panelErr(label,e){ return `<div class="panel"><h3>${esc(label)}</h3><div class="locked">${esc(friendly(e))}</div>${(e&&e.raw)?`<details class="raw"><summary>تفاصيل</summary><pre>${esc(JSON.stringify(e.raw,null,2))}</pre></details>`:""}</div>`; }
 
-// ---- tiny dom helpers ----
+// dom utils
 function el(tag,cls){ const e=document.createElement(tag); if(cls)e.className=cls; return e; }
 function elText(tag,cls,txt){ const e=el(tag,cls); e.textContent=txt; return e; }
-function btn(txt,cls){ const b=el("button","btn "+(cls||"")); b.textContent=txt; return b; }
-function hdr(txt){ const h=el("h3"); h.textContent=txt; return h; }
+function btnRaw(txt,cls){ const b=el("button",cls||""); b.textContent=txt; return b; }
+function panel(title){ const p=el("div","panel"); p.appendChild(elText("h3","",title)); return p; }
+function show(node){ const v=$("#view"); v.innerHTML=""; v.appendChild(node); }
 function rawBlock(body){ const d=el("details","raw"); d.innerHTML=`<summary>عرض الاستجابة الخام (JSON)</summary><pre>${esc(JSON.stringify(body,null,2))}</pre>`; return d; }
 function prettyKey(k){ return String(k).replace(/[_-]+/g," ").replace(/\b\w/g,c=>c.toUpperCase()); }
 function esc(s){ return String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])); }
 
-// ---- modal builder. onSubmit(setMsg)->bool (true closes). setMsg(text,kind,rawData) ----
-function modal(title, bodyEl, onSubmit, submitLabel){
-  const root=$("#modalRoot");
-  const ov=el("div","overlay");
-  const box=el("div","modal");
+// modal
+function modal(title,bodyEl,onSubmit,submitLabel){
+  const root=$("#modalRoot"); const ov=el("div","overlay"); const box=el("div","modal");
   const close=el("button","close"); close.innerHTML="&times;"; close.onclick=()=>root.innerHTML="";
-  const h=el("h3"); h.textContent=title;
-  const msg=el("div","msg"); const rawHolder=el("div");
-  const sb=btn(submitLabel||"إرسال");
+  const h=el("h3"); h.textContent=title; const msg=el("div","msg"); const rawHolder=el("div");
+  const sb=btnRaw(submitLabel||"إرسال","btn");
   box.append(close,h,bodyEl,sb,msg,rawHolder); ov.appendChild(box); root.innerHTML=""; root.appendChild(ov);
   ov.addEventListener("click",e=>{ if(e.target===ov) root.innerHTML=""; });
-  const setMsg=(text,kind,raw)=>{ msg.className="msg"+(kind?(" "+kind):""); msg.textContent=text;
-    rawHolder.innerHTML=""; if(raw!=null) rawHolder.appendChild(rawBlock(raw)); };
-  sb.onclick=async ()=>{ sb.disabled=true; const old=sb.textContent; sb.textContent="…";
-    try{ const done=await onSubmit(setMsg); if(done) root.innerHTML=""; }
-    catch(e){ setMsg(e.message,"err"); } finally{ sb.disabled=false; sb.textContent=old; } };
-  return { setBtn:(t)=>{sb.textContent=t;}, close:()=>root.innerHTML="" };
+  const setMsg=(text,kind,raw)=>{ msg.className="msg"+(kind?(" "+kind):""); msg.textContent=text; rawHolder.innerHTML=""; if(raw!=null) rawHolder.appendChild(rawBlock(raw)); };
+  sb.onclick=async()=>{ sb.disabled=true; const old=sb.textContent; sb.textContent="…"; try{ const done=await onSubmit(setMsg); if(done) root.innerHTML=""; }catch(e){ setMsg(e.message,"err"); } finally{ sb.disabled=false; sb.textContent=old; } };
+  return { setBtn:t=>{sb.textContent=t;}, close:()=>root.innerHTML="" };
 }
 
 if(TOKEN) enterApp();
