@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نقابة أطباء الأسنان في سورية</title>
+<style>
+  :root{
+    --bg:#0f1720; --panel:#16212e; --panel2:#1d2b3a; --line:#28384a;
+    --text:#e8eef5; --muted:#93a4b7; --accent:#2f9e6b; --accent2:#37b37e;
+    --danger:#e05656; --radius:14px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Cairo","Segoe UI",system-ui,Tahoma,sans-serif;background:var(--bg);color:var(--text)}
+  a{color:var(--accent2)}
+  button{font-family:inherit;cursor:pointer}
+  .hidden{display:none!important}
+  /* login */
+  #login{min-height:100vh;display:grid;place-items:center;padding:20px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:26px;width:100%;max-width:380px}
+  .card h1{font-size:19px;margin:0 0 4px;text-align:center}
+  .card p.sub{color:var(--muted);font-size:13px;text-align:center;margin:0 0 20px}
+  label{display:block;font-size:13px;color:var(--muted);margin:14px 0 6px}
+  input{width:100%;padding:11px 12px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;color:var(--text);font-size:15px}
+  input:focus{outline:none;border-color:var(--accent)}
+  .btn{width:100%;margin-top:20px;padding:12px;border:0;border-radius:10px;background:var(--accent);color:#fff;font-size:15px;font-weight:700}
+  .btn:hover{background:var(--accent2)}
+  .btn.sec{background:var(--panel2);border:1px solid var(--line);color:var(--text);font-weight:500}
+  .msg{margin-top:14px;font-size:13px;text-align:center;min-height:18px}
+  .msg.err{color:var(--danger)}
+  .msg.ok{color:var(--accent2)}
+  /* shell */
+  header{display:flex;align-items:center;gap:12px;padding:12px 18px;background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+  header .logo{width:34px;height:34px;border-radius:8px;background:var(--accent);display:grid;place-items:center;font-weight:800;color:#fff}
+  header h2{font-size:16px;margin:0;flex:1}
+  header button{padding:8px 14px;border-radius:9px;border:1px solid var(--line);background:var(--panel2);color:var(--text);font-size:13px}
+  nav{display:flex;gap:6px;overflow-x:auto;padding:10px 14px;background:var(--panel);border-bottom:1px solid var(--line)}
+  nav button{white-space:nowrap;padding:8px 14px;border-radius:20px;border:1px solid var(--line);background:transparent;color:var(--muted);font-size:14px}
+  nav button.active{background:var(--accent);border-color:var(--accent);color:#fff}
+  main{max-width:900px;margin:0 auto;padding:18px 14px 60px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:16px}
+  .panel h3{margin:0 0 12px;font-size:15px}
+  .loading{color:var(--muted);font-size:14px;padding:14px 0}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  td.k{color:var(--muted);width:40%;font-size:13px}
+  .kv-nested{margin:0;padding:0}
+  .badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;background:var(--panel2);border:1px solid var(--line)}
+  img.thumb{max-width:180px;border-radius:10px;border:1px solid var(--line)}
+  .row-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+  .row-actions button{padding:8px 12px;border-radius:9px;border:1px solid var(--line);background:var(--panel2);color:var(--text);font-size:13px}
+  .empty{color:var(--muted);font-size:14px;padding:10px 0}
+  details.raw{margin-top:12px}
+  details.raw summary{color:var(--muted);font-size:12px;cursor:pointer}
+  pre{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px;overflow:auto;font-size:12px;direction:ltr;text-align:left}
+</style>
+</head>
+<body>
+
+<!-- ===== login ===== -->
+<section id="login">
+  <form class="card" id="loginForm" autocomplete="on">
+    <h1>نقابة أطباء الأسنان في سورية</h1>
+    <p class="sub">سجّل الدخول بنفس بيانات التطبيق</p>
+    <label for="u">اسم المستخدم</label>
+    <input id="u" name="username" autocomplete="username" required>
+    <label for="p">كلمة المرور</label>
+    <input id="p" name="password" type="password" autocomplete="current-password" required>
+    <button class="btn" type="submit" id="loginBtn">دخول</button>
+    <div class="msg" id="loginMsg"></div>
+  </form>
+</section>
+
+<!-- ===== app shell ===== -->
+<div id="app" class="hidden">
+  <header>
+    <div class="logo">د</div>
+    <h2>حسابي · نقابة أطباء الأسنان</h2>
+    <button id="logoutBtn">خروج</button>
+  </header>
+  <nav id="tabs"></nav>
+  <main id="view"></main>
+</div>
+
+<script>
+const BASE = "https://api.syriadent.org.sy";
+const $ = s => document.querySelector(s);
+let TOKEN = localStorage.getItem("sd_token") || "";
+
+// tabs: label + endpoint + how to render. path can be a function of nothing.
+const TABS = [
+  { id:"profile",  label:"الملف الشخصي", path:"doctor/profile" },
+  { id:"idcard",   label:"البطاقة",       path:"doctor/id_card" },
+  { id:"status",   label:"حالة الحساب",   path:"doctor/status" },
+  { id:"certs",    label:"الشهادات",      path:"certificate/doctor" },
+  { id:"invoices", label:"الفواتير",      path:"doctors/invoices" },
+  { id:"payments", label:"المدفوعات",     path:"doctors/payments/" },
+  { id:"transfer", label:"نقل الفرع",     path:"branch-transfer/my" },
+  { id:"notifs",   label:"الإشعارات",     path:"notifications/actions" },
+  { id:"directory",label:"دليل الأطباء",  path:"doctor/all" },
+];
+
+// ---- api helper (adds bearer, unwraps envelope, handles 401) ----
+async function api(path, opts={}){
+  const res = await fetch(`${BASE}/${path}`, {
+    ...opts,
+    headers:{ "Content-Type":"application/json", ...(TOKEN?{Authorization:`Bearer ${TOKEN}`}:{}), ...(opts.headers||{}) },
+  });
+  let body=null; try{ body=await res.json(); }catch{ body=null; }
+  if(res.status===401){ logout("انتهت الجلسة، سجّل الدخول من جديد"); throw new Error("401"); }
+  if(!res.ok){ const m = body?.message || `HTTP ${res.status}`; throw new Error(Array.isArray(m)?m.join("، "):m); }
+  return body;
+}
+
+// ---- login ----
+$("#loginForm").addEventListener("submit", async e=>{
+  e.preventDefault();
+  const msg=$("#loginMsg"), btn=$("#loginBtn");
+  msg.className="msg"; msg.textContent=""; btn.disabled=true; btn.textContent="جارٍ الدخول…";
+  try{
+    const r = await fetch(`${BASE}/auth/login`,{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({user_name:$("#u").value.trim(), password:$("#p").value})});
+    const b = await r.json();
+    if(!r.ok){ const m=b?.message; throw new Error(Array.isArray(m)?m.join("، "):(m||"فشل الدخول")); }
+    const tok = b?.data?.accessToken || b?.accessToken || b?.data?.access_token || b?.access_token;
+    if(!tok) throw new Error("لم يصل رمز الدخول من الخادم");
+    TOKEN = tok; localStorage.setItem("sd_token", TOKEN);
+    enterApp();
+  }catch(err){ msg.classList.add("err"); msg.textContent = err.message; }
+  finally{ btn.disabled=false; btn.textContent="دخول"; }
+});
+
+function logout(note){
+  TOKEN=""; localStorage.removeItem("sd_token");
+  $("#app").classList.add("hidden"); $("#login").classList.remove("hidden");
+  const msg=$("#loginMsg"); msg.className="msg"+(note?" err":""); msg.textContent=note||"";
+}
+$("#logoutBtn").addEventListener("click", ()=>logout(""));
+
+// ---- app shell ----
+function enterApp(){
+  $("#login").classList.add("hidden"); $("#app").classList.remove("hidden");
+  const nav=$("#tabs"); nav.innerHTML="";
+  TABS.forEach((t,i)=>{
+    const b=document.createElement("button"); b.textContent=t.label;
+    b.onclick=()=>{ [...nav.children].forEach(c=>c.classList.remove("active")); b.classList.add("active"); openTab(t); };
+    nav.appendChild(b);
+    if(i===0){ b.classList.add("active"); openTab(t); }
+  });
+}
+
+async function openTab(t){
+  const view=$("#view");
+  view.innerHTML=`<div class="panel"><h3>${t.label}</h3><div class="loading">جارٍ التحميل…</div></div>`;
+  try{
+    const body = await api(t.path);
+    const data = (body && "data" in body) ? body.data : body;
+    view.innerHTML="";
+    const panel=document.createElement("div"); panel.className="panel";
+    panel.innerHTML=`<h3>${t.label}</h3>`;
+    if(data==null || (Array.isArray(data)&&data.length===0)){
+      panel.insertAdjacentHTML("beforeend",`<div class="empty">لا توجد بيانات</div>`);
+    } else {
+      panel.appendChild(render(data));
+    }
+    const raw=document.createElement("details"); raw.className="raw";
+    raw.innerHTML=`<summary>عرض الاستجابة الخام (JSON)</summary><pre>${escapeHtml(JSON.stringify(body,null,2))}</pre>`;
+    panel.appendChild(raw);
+    view.appendChild(panel);
+  }catch(err){
+    if(err.message==="401") return;
+    view.innerHTML=`<div class="panel"><h3>${t.label}</h3><div class="empty">تعذّر التحميل: ${escapeHtml(err.message)}</div></div>`;
+  }
+}
+
+// ---- generic renderer: objects -> key/value tables, arrays -> stacked cards, urls -> links, images -> thumbs ----
+function render(v){
+  if(Array.isArray(v)){
+    const wrap=document.createElement("div");
+    if(v.length===0){ wrap.className="empty"; wrap.textContent="لا توجد عناصر"; return wrap; }
+    v.forEach((item,i)=>{
+      const c=document.createElement("div"); c.className="panel"; c.style.background="var(--panel2)";
+      c.innerHTML=`<div class="badge">#${i+1}</div>`;
+      c.appendChild(render(item));
+      wrap.appendChild(c);
+    });
+    return wrap;
+  }
+  if(v && typeof v==="object"){
+    const tbl=document.createElement("table");
+    for(const [k,val] of Object.entries(v)){
+      const tr=document.createElement("tr");
+      const td1=document.createElement("td"); td1.className="k"; td1.textContent=prettyKey(k);
+      const td2=document.createElement("td");
+      td2.appendChild(renderLeaf(k,val));
+      tr.append(td1,td2); tbl.appendChild(tr);
+    }
+    return tbl;
+  }
+  return renderLeaf("",v);
+}
+function renderLeaf(key,val){
+  if(val===null||val===undefined){ const s=document.createElement("span"); s.className="empty"; s.textContent="—"; return s; }
+  if(typeof val==="object") return render(val);
+  const str=String(val);
+  const isUrl=/^https?:\/\//i.test(str) || /^\/[\w./%-]+\.(png|jpg|jpeg|webp|gif|pdf)$/i.test(str);
+  const abs = str.startsWith("/") ? BASE+str : str;
+  if(isUrl && /\.(png|jpg|jpeg|webp|gif)$/i.test(str)){ const img=document.createElement("img"); img.className="thumb"; img.src=abs; img.alt=key; return img; }
+  if(isUrl){ const a=document.createElement("a"); a.href=abs; a.target="_blank"; a.textContent=str; return a; }
+  const span=document.createElement("span"); span.textContent=str; return span;
+}
+function prettyKey(k){ return String(k).replace(/[_-]+/g," ").replace(/\b\w/g,c=>c.toUpperCase()); }
+function escapeHtml(s){ return String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])); }
+
+// auto-resume if a token is already stored
+if(TOKEN) enterApp();
+</script>
+</body>
+</html>
