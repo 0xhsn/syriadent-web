@@ -257,7 +257,68 @@ async function renderProfile(t){
 function profileActions(){
   const row=el("div","actions-row");
   const b=btnRaw("تعديل البيانات","btn sm sec"); b.onclick=()=>openEditProfile(PROFILE); row.appendChild(b);
+  const st=PROFILE&&PROFILE.branches&&PROFILE.branches[0]&&PROFILE.branches[0].status;
+  if(st==="Refused"||st==="Rejected"){
+    const r=btnRaw("إعادة التسجيل","btn sm"); r.onclick=()=>renderReRegister(); row.appendChild(r);
+  }
   return row;
+}
+
+// ---- re-register (best-effort; multipart document re-submission, UNVERIFIED) ----
+async function submitMultipart(path,fields,files){
+  const fd=new FormData();
+  for(const [k,v] of Object.entries(fields)) if(v!=null&&v!=="") fd.append(k,v);
+  for(const [k,f] of Object.entries(files)) if(f) fd.append(k,f,f.name);
+  const res=await fetch(`${BASE}/${path}`,{method:"POST",headers:{Authorization:`Bearer ${TOKEN}`},body:fd});
+  if(res.status===401){ logout("انتهت الجلسة، سجّل الدخول من جديد"); throw new Error("401"); }
+  let data=null; try{ data=await res.json(); }catch{}
+  return {status:res.status, ok:res.ok, data};
+}
+function renderReRegister(){
+  const d=PROFILE||{};
+  const p=panel("إعادة التسجيل");
+  p.appendChild(elText("div","note","تُعيد تقديم طلبك مع الوثائق إلى الفرع للمراجعة. ميزة غير مؤكدة (أسماء الحقول تقديرية): إن فشلت استخدم التطبيق الرسمي، ويُفضّل مراجعة الفرع لمعرفة سبب الرفض أولاً. ستظهر استجابة الخادم بالأسفل بعد الإرسال."));
+  const back=btnRaw("رجوع للملف","btn sm sec"); back.onclick=()=>runTab(TABS.find(t=>t.id==="profile")); p.appendChild(back);
+  const inputs={};
+  p.appendChild(elText("div","sec-title","البيانات"));
+  [["first_name","اسم"],["last_name","الكنية"],["father_name","اسم الأب"],["mother_name","اسم الأم"],
+   ["national_number","الرقم الوطني"],["english_full_name","الاسم بالإنجليزية"],["blood_type","زمرة الدم"],
+   ["city_of_birth","مكان الولادة"],["address","العنوان"],["civil_registry","القيد المدني"],
+   ["social_status","الحالة الاجتماعية"],["number_of_children","عدد الأولاد"]].forEach(([k,lbl])=>{
+    const l=document.createElement("label"); l.textContent=lbl; const inp=document.createElement("input"); inp.value=d[k]==null?"":d[k]; inputs[k]=inp; p.append(l,inp);
+  });
+  const lb=document.createElement("label"); lb.textContent="تاريخ الميلاد"; const birth=document.createElement("input"); birth.type="date"; birth.value=fmtDate(d.birth_date); inputs["birth_date"]=birth; p.append(lb,birth);
+  const lg=document.createElement("label"); lg.textContent="الجنس"; const gsel=document.createElement("select");
+  [["true","ذكر"],["false","أنثى"]].forEach(([v,t])=>{const o=document.createElement("option");o.value=v;o.textContent=t;if(String(d.gender)===v)o.selected=true;gsel.appendChild(o);}); inputs["gender"]=gsel; p.append(lg,gsel);
+  const lgov=document.createElement("label"); lgov.textContent="المحافظة"; const gov=document.createElement("select"); gov.innerHTML="<option>جارٍ التحميل…</option>"; inputs["governorate_id"]=gov; p.append(lgov,gov);
+  api("governorate/only").then(b=>{ const arr=(b&&b.data)||[]; gov.innerHTML=""; arr.forEach(x=>{const o=document.createElement("option");o.value=x.governorate_id;o.textContent=x.name;if(x.governorate_id===d.governorate_id)o.selected=true;gov.appendChild(o);}); }).catch(()=>{gov.innerHTML="<option value=''>تعذّر التحميل</option>";});
+  p.appendChild(elText("div","sec-title","الوثائق (أرفِق ما تريد تحديثه)"));
+  const fileInputs={};
+  [["doctor_front_face_id_file","صورة الهوية (أمام)"],["doctor_back_face_id_file","صورة الهوية (خلف)"],
+   ["certificate_photo_file","صورة الشهادة"],["temporary_photo_file","صورة الإجازة"],
+   ["referral_photo_file","صورة الإحالة"]].forEach(([k,lbl])=>{
+    const l=document.createElement("label"); l.textContent=lbl; const inp=document.createElement("input"); inp.type="file"; inp.accept="image/*"; fileInputs[k]=inp; p.append(l,inp);
+  });
+  const confWrap=el("div"); confWrap.style.margin="16px 0 4px";
+  const cb=document.createElement("input"); cb.type="checkbox"; cb.id="rrConfirm"; cb.style.width="auto"; cb.style.marginLeft="8px"; cb.style.verticalAlign="middle";
+  const cl=document.createElement("label"); cl.htmlFor="rrConfirm"; cl.textContent="أؤكد أنني أريد إعادة تقديم طلب التسجيل إلى الفرع"; cl.style.display="inline"; cl.style.color="var(--text)"; cl.style.margin="0";
+  confWrap.append(cb,cl); p.appendChild(confWrap);
+  const sub=btnRaw("إرسال طلب إعادة التسجيل","btn"); sub.disabled=true; p.appendChild(sub);
+  const msg=el("div","msg"); const rawHolder=el("div"); p.append(msg,rawHolder);
+  cb.onchange=()=>{ sub.disabled=!cb.checked; };
+  sub.onclick=async ()=>{
+    sub.disabled=true; const old=sub.textContent; sub.textContent="جارٍ الإرسال…";
+    const fields={}; Object.entries(inputs).forEach(([k,elm])=>{ fields[k]=elm.value; });
+    const files={}; Object.entries(fileInputs).forEach(([k,elm])=>{ if(elm.files&&elm.files[0]) files[k]=elm.files[0]; });
+    try{
+      const r=await submitMultipart("doctor/re_register",fields,files);
+      msg.className="msg "+(r.ok?"ok":"err"); msg.textContent=r.ok?"تم الإرسال بنجاح":("تعذّر الإرسال: "+(msgOf(r.data)||("HTTP "+r.status)));
+      rawHolder.innerHTML=""; rawHolder.appendChild(rawBlock(r.data));
+      if(r.ok){ PROFILE=null; }
+    }catch(e){ if(e.message!=="401"){ msg.className="msg err"; msg.textContent=e.message; } }
+    finally{ sub.disabled=false; sub.textContent=old; }
+  };
+  show(p);
 }
 function certCard(c){
   return kvTable([
