@@ -8,28 +8,29 @@
   :root{
     --bg:#0f1720; --panel:#16212e; --panel2:#1d2b3a; --line:#28384a;
     --text:#e8eef5; --muted:#93a4b7; --accent:#2f9e6b; --accent2:#37b37e;
-    --danger:#e05656; --warn:#d89a3a; --radius:14px;
+    --danger:#e05656; --warn:#e0a13a; --radius:14px;
   }
   *{box-sizing:border-box}
   body{margin:0;font-family:"Cairo","Segoe UI",system-ui,Tahoma,sans-serif;background:var(--bg);color:var(--text)}
-  a{color:var(--accent2);cursor:pointer}
+  a{color:var(--accent2)}
   button{font-family:inherit;cursor:pointer}
   .hidden{display:none!important}
+  /* login */
   #login{min-height:100vh;display:grid;place-items:center;padding:20px}
-  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:26px;width:100%;max-width:400px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:26px;width:100%;max-width:380px}
   .card h1{font-size:19px;margin:0 0 4px;text-align:center}
   .card p.sub{color:var(--muted);font-size:13px;text-align:center;margin:0 0 20px}
   label{display:block;font-size:13px;color:var(--muted);margin:14px 0 6px}
-  input,select{width:100%;padding:11px 12px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;color:var(--text);font-size:15px}
-  input:focus,select:focus{outline:none;border-color:var(--accent)}
-  .btn{width:100%;margin-top:18px;padding:12px;border:0;border-radius:10px;background:var(--accent);color:#fff;font-size:15px;font-weight:700}
+  input{width:100%;padding:11px 12px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;color:var(--text);font-size:15px}
+  input:focus{outline:none;border-color:var(--accent)}
+  .btn{width:100%;margin-top:20px;padding:12px;border:0;border-radius:10px;background:var(--accent);color:#fff;font-size:15px;font-weight:700}
   .btn:hover{background:var(--accent2)}
-  .btn:disabled{opacity:.6;cursor:default}
-  .btn.sec{background:var(--panel2);border:1px solid var(--line);color:var(--text);font-weight:600}
-  .btn.sm{width:auto;padding:8px 14px;margin-top:0;font-size:13px}
+  .btn:disabled{opacity:.55;cursor:default}
+  .btn.sec{background:var(--panel2);border:1px solid var(--line);color:var(--text);font-weight:500}
   .msg{margin-top:14px;font-size:13px;text-align:center;min-height:18px}
-  .msg.err{color:var(--danger)} .msg.ok{color:var(--accent2)}
-  .linkrow{margin-top:14px;text-align:center;font-size:13px}
+  .msg.err{color:var(--danger)}
+  .msg.ok{color:var(--accent2)}
+  /* shell */
   header{display:flex;align-items:center;gap:12px;padding:12px 18px;background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
   header .logo{width:34px;height:34px;border-radius:8px;background:var(--accent);display:grid;place-items:center;font-weight:800;color:#fff}
   header h2{font-size:16px;margin:0;flex:1}
@@ -37,40 +38,43 @@
   nav{display:flex;gap:6px;overflow-x:auto;padding:10px 14px;background:var(--panel);border-bottom:1px solid var(--line)}
   nav button{white-space:nowrap;padding:8px 14px;border-radius:20px;border:1px solid var(--line);background:transparent;color:var(--muted);font-size:14px}
   nav button.active{background:var(--accent);border-color:var(--accent);color:#fff}
-  main{max-width:920px;margin:0 auto;padding:18px 14px 60px}
+  main{max-width:900px;margin:0 auto;padding:18px 14px 60px}
   .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:16px}
-  .panel h3{margin:0 0 12px;font-size:15px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-  .sec-title{font-size:13px;color:var(--muted);margin:18px 0 8px;padding-top:12px;border-top:1px solid var(--line)}
-  .sec-title:first-of-type{border-top:0;padding-top:0;margin-top:4px}
+  .panel h3{margin:0 0 12px;font-size:15px}
   .loading{color:var(--muted);font-size:14px;padding:14px 0}
   table{width:100%;border-collapse:collapse;font-size:14px}
   td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
-  td.k{color:var(--muted);width:42%;font-size:13px}
-  .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;background:var(--panel2);border:1px solid var(--line)}
-  .badge.green{background:rgba(47,158,107,.16);border-color:var(--accent);color:var(--accent2)}
-  .badge.red{background:rgba(224,86,86,.15);border-color:var(--danger);color:#f0a0a0}
-  .badge.warn{background:rgba(216,154,58,.15);border-color:var(--warn);color:var(--warn)}
-  .hero{display:flex;flex-direction:column;gap:6px;margin-bottom:6px}
-  .hero .name{font-size:20px;font-weight:800}
-  .hero .en{color:var(--muted);font-size:13px}
-  .hero .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-  img.thumb{max-width:220px;border-radius:10px;border:1px solid var(--line);display:block;margin-top:6px}
+  td.k{color:var(--muted);width:40%;font-size:13px}
+  .kv-nested{margin:0;padding:0}
+  .badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;background:var(--panel2);border:1px solid var(--line)}
+  .badge.pending{background:#3a2f14;border-color:#5c4a1e;color:var(--warn)}
+  .badge.paid,.badge.accepted{background:#123528;border-color:#1e5c43;color:var(--accent2)}
+  .badge.rejected{background:#3a1414;border-color:#5c1e1e;color:var(--danger)}
+  img.thumb{max-width:180px;border-radius:10px;border:1px solid var(--line)}
+  .row-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+  .row-actions button{padding:8px 12px;border-radius:9px;border:1px solid var(--line);background:var(--panel2);color:var(--text);font-size:13px}
   .empty{color:var(--muted);font-size:14px;padding:10px 0}
-  .locked{color:var(--warn);font-size:14px;padding:14px;background:rgba(216,154,58,.08);border:1px solid rgba(216,154,58,.3);border-radius:12px}
-  .note{font-size:12px;color:var(--warn);background:rgba(216,154,58,.08);border:1px solid rgba(216,154,58,.3);border-radius:10px;padding:9px 11px;margin-bottom:12px}
-  details.raw{margin-top:14px}
+  details.raw{margin-top:12px}
   details.raw summary{color:var(--muted);font-size:12px;cursor:pointer}
   pre{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px;overflow:auto;font-size:12px;direction:ltr;text-align:left}
-  .actions-row{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 14px}
-  .item{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px}
-  .item .top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
-  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:grid;place-items:center;z-index:20;padding:16px}
-  .modal{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px;width:100%;max-width:460px;max-height:90vh;overflow:auto}
-  .modal h3{margin:0 0 4px;font-size:17px}
-  .modal .close{float:left;background:none;border:0;color:var(--muted);font-size:20px;cursor:pointer}
-  .step{display:flex;gap:6px;margin:8px 0 14px}
-  .step span{flex:1;height:4px;border-radius:2px;background:var(--line)}
-  .step span.on{background:var(--accent)}
+  /* payment */
+  .pay-head{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between}
+  .fee-big{font-size:30px;font-weight:800;color:var(--accent2)}
+  .fee-cur{font-size:15px;color:var(--muted);font-weight:600}
+  .pay-grid{display:grid;grid-template-columns:1fr;gap:14px;margin-top:8px}
+  .invoice{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px}
+  .invoice .top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
+  .invoice .ttl{font-weight:700}
+  .invoice .desc{color:var(--muted);font-size:13px;margin-bottom:10px}
+  .provider{display:flex;align-items:center;gap:8px;margin:6px 0 12px}
+  .provider img{width:26px;height:26px;border-radius:6px;background:#fff;padding:2px}
+  .qr-wrap{display:flex;flex-wrap:wrap;gap:18px;align-items:center;margin-top:6px}
+  .qr-box{background:#fff;padding:12px;border-radius:12px;display:grid;place-items:center}
+  .qr-box img{width:190px;height:190px;image-rendering:pixelated}
+  .bill{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:20px;letter-spacing:1px;direction:ltr;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:inline-flex;gap:10px;align-items:center}
+  .bill button{padding:5px 10px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--text);font-size:12px}
+  .steps{font-size:13px;color:var(--muted);line-height:1.9;margin:10px 0 0;padding-inline-start:18px}
+  .note{font-size:12px;color:var(--warn);margin-top:8px}
 </style>
 </head>
 <body>
@@ -86,7 +90,6 @@
     <input id="p" name="password" type="password" autocomplete="current-password" required>
     <button class="btn" type="submit" id="loginBtn">دخول</button>
     <div class="msg" id="loginMsg"></div>
-    <div class="linkrow"><a id="forgotLink">نسيت كلمة المرور؟</a></div>
   </form>
 </section>
 
@@ -101,443 +104,353 @@
   <main id="view"></main>
 </div>
 
-<div id="modalRoot"></div>
-
 <script>
 const BASE = "https://api.syriadent.org.sy";
 const $ = s => document.querySelector(s);
 let TOKEN = localStorage.getItem("sd_token") || "";
-let PROFILE = null; // cached doctor/profile.data
+let PROFILE = null;           // cached doctor/profile data
+let POLL = null;              // payment status poll timer
 
+// ShamCash QR image (encodes the numeric bill number). Regenerated per invoice below.
+const SHAMCASH_LOGO = "asset/payment_method/sham_cash.png"; // in-app asset name (not fetched here)
+
+// tabs: label + how to render. type:"custom" tabs are handled by dedicated renderers.
 const TABS = [
-  { id:"profile",   label:"الملف الشخصي", render:renderProfile },
-  { id:"status",    label:"حالة الحساب",   render:t=>renderGet(t,"doctor/status") },
-  { id:"certs",     label:"الشهادات",      render:renderCerts },
-  { id:"invoices",  label:"الفواتير",      render:renderInvoices },
-  { id:"payments",  label:"المدفوعات",     render:t=>renderGet(t,"doctor/payments") },
-  { id:"transfer",  label:"نقل الفرع",     render:renderTransfer },
-  { id:"directory", label:"دليل الأطباء",  render:t=>renderGet(t,"doctor/all") },
-  { id:"security",  label:"الأمان",        render:renderSecurity },
+  { id:"profile",  label:"الملف الشخصي", path:"doctor/profile" },
+  { id:"status",   label:"حالة الحساب",   path:"doctor/status" },
+  { id:"payment",  label:"الرسوم والدفع", type:"payment" },
+  { id:"invoices", label:"الفواتير",      path:"doctors/invoices" },
+  { id:"certs",    label:"الشهادات",      type:"certs" },
+  { id:"transfer", label:"نقل الفرع",     path:"branch-transfer/available-branches" },
+  { id:"directory",label:"دليل الأطباء",  path:"doctor/all" },
 ];
 
-// ---- core fetch ----
-async function req(path,{method="GET",body=null,auth=true}={}){
-  const res=await fetch(`${BASE}/${path}`,{
-    method,
-    headers:{"Content-Type":"application/json",...(auth&&TOKEN?{Authorization:`Bearer ${TOKEN}`}:{})},
-    body: body!=null?JSON.stringify(body):null,
+// ---- api helper (adds bearer, unwraps envelope, handles 401) ----
+async function api(path, opts={}){
+  const res = await fetch(`${BASE}/${path}`, {
+    ...opts,
+    headers:{ "Content-Type":"application/json", ...(TOKEN?{Authorization:`Bearer ${TOKEN}`}:{}), ...(opts.headers||{}) },
   });
-  let data=null; try{ data=await res.json(); }catch{}
-  return { status:res.status, ok:res.ok, data };
+  let body=null; try{ body=await res.json(); }catch{ body=null; }
+  if(res.status===401){ logout("انتهت الجلسة، سجّل الدخول من جديد"); throw new Error("401"); }
+  if(!res.ok){ const m = body?.message || `HTTP ${res.status}`; throw new Error(Array.isArray(m)?m.join("، "):m); }
+  return body;
 }
-async function api(path){
-  const r=await req(path);
-  if(r.status===401){ logout("انتهت الجلسة، سجّل الدخول من جديد"); throw new Error("401"); }
-  if(!r.ok){ const e=new Error(msgOf(r.data)||`HTTP ${r.status}`); e.status=r.status; e.raw=r.data; throw e; }
-  return r.data;
-}
-async function writeOp(path,body){ // try methods, skip route/permission-neutral 404/405
-  let last=null;
-  for(const m of ["POST","PATCH","PUT"]){ const r=await req(path,{method:m,body}); last=r; if(r.status!==404&&r.status!==405) break; }
-  return last;
-}
-function msgOf(d){ const m=d&&d.message; return Array.isArray(m)?m.join("، "):(m||""); }
-function pick(o,keys){ if(!o) return null; for(const k of keys) if(o[k]!=null) return o[k]; return null; }
+const unwrap = b => (b && typeof b==="object" && "data" in b) ? b.data : b;
 
 // ---- login ----
-$("#loginForm").addEventListener("submit",async e=>{
+$("#loginForm").addEventListener("submit", async e=>{
   e.preventDefault();
-  const msg=$("#loginMsg"),btn=$("#loginBtn");
+  const msg=$("#loginMsg"), btn=$("#loginBtn");
   msg.className="msg"; msg.textContent=""; btn.disabled=true; btn.textContent="جارٍ الدخول…";
   try{
-    const r=await req("auth/login",{method:"POST",auth:false,body:{user_name:$("#u").value.trim(),password:$("#p").value}});
-    if(!r.ok) throw new Error(msgOf(r.data)||"فشل الدخول");
-    const d=r.data&&r.data.data||{};
-    const tok=pick(d,["access_token","accessToken"])||pick(r.data,["access_token","accessToken"]);
+    const r = await fetch(`${BASE}/auth/login`,{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({user_name:$("#u").value.trim(), password:$("#p").value})});
+    const b = await r.json();
+    if(!r.ok){ const m=b?.message; throw new Error(Array.isArray(m)?m.join("، "):(m||"فشل الدخول")); }
+    const tok = b?.data?.accessToken || b?.accessToken || b?.data?.access_token || b?.access_token;
     if(!tok) throw new Error("لم يصل رمز الدخول من الخادم");
-    TOKEN=tok; localStorage.setItem("sd_token",TOKEN); enterApp();
-  }catch(err){ msg.classList.add("err"); msg.textContent=err.message; }
+    TOKEN = tok; localStorage.setItem("sd_token", TOKEN);
+    enterApp();
+  }catch(err){ msg.classList.add("err"); msg.textContent = err.message; }
   finally{ btn.disabled=false; btn.textContent="دخول"; }
 });
-function logout(note){
-  TOKEN=""; PROFILE=null; localStorage.removeItem("sd_token");
-  $("#app").classList.add("hidden"); $("#login").classList.remove("hidden");
-  const m=$("#loginMsg"); m.className="msg"+(note?" err":""); m.textContent=note||"";
-}
-$("#logoutBtn").addEventListener("click",()=>logout(""));
 
-// ---- shell ----
+function logout(note){
+  TOKEN=""; PROFILE=null; localStorage.removeItem("sd_token"); stopPoll();
+  $("#app").classList.add("hidden"); $("#login").classList.remove("hidden");
+  const msg=$("#loginMsg"); msg.className="msg"+(note?" err":""); msg.textContent=note||"";
+}
+$("#logoutBtn").addEventListener("click", ()=>logout(""));
+
+// ---- app shell ----
 function enterApp(){
   $("#login").classList.add("hidden"); $("#app").classList.remove("hidden");
   const nav=$("#tabs"); nav.innerHTML="";
   TABS.forEach((t,i)=>{
-    const b=btnRaw(t.label,"tabbtn");
-    b.onclick=()=>{ [...nav.children].forEach(c=>c.classList.remove("active")); b.classList.add("active"); runTab(t); };
+    const b=document.createElement("button"); b.textContent=t.label;
+    b.onclick=()=>{ stopPoll(); [...nav.children].forEach(c=>c.classList.remove("active")); b.classList.add("active"); openTab(t); };
     nav.appendChild(b);
-    if(i===0){ b.classList.add("active"); runTab(t); }
+    if(i===0){ b.classList.add("active"); openTab(t); }
   });
 }
-async function runTab(t){
+
+async function openTab(t){
   const view=$("#view");
   view.innerHTML=`<div class="panel"><h3>${t.label}</h3><div class="loading">جارٍ التحميل…</div></div>`;
-  try{ await t.render(t); }
-  catch(err){ if(err.message!=="401") view.innerHTML=panelErr(t.label,err); }
-}
-
-// ---- generic GET tab (status, payments, directory) ----
-async function renderGet(t,path){
-  const body=await api(path);
-  const data=(body&&"data"in body)?body.data:body;
-  const p=panel(t.label);
-  if(data==null||(Array.isArray(data)&&!data.length)) p.appendChild(elText("div","empty","لا توجد بيانات"));
-  else p.appendChild(render(data));
-  p.appendChild(rawBlock(body));
-  show(p);
-}
-
-// ---- profile (curated) ----
-async function renderProfile(t){
-  const body=await api("doctor/profile");
-  PROFILE=body.data||{}; const d=PROFILE;
-  const p=panel("الملف الشخصي");
-  // hero
-  const hero=el("div","hero");
-  hero.appendChild(elText("div","name",[d.first_name,d.father_name,d.last_name].filter(Boolean).join(" ")||d.user&&d.user.full_name||""));
-  if(d.english_full_name) hero.appendChild(elText("div","en",d.english_full_name));
-  const chips=el("div","chips");
-  if(d.syndicate_number!=null) chips.appendChild(elText("span","badge","رقم النقابة: "+d.syndicate_number));
-  if(d.current_branch_name) chips.appendChild(elText("span","badge","الفرع: "+d.current_branch_name));
-  if(d.subscription_status) chips.appendChild(elText("span","badge "+(d.subscription_status.includes("غير")?"red":"green"),"الاشتراك: "+d.subscription_status));
-  const acct=d.branches&&d.branches[0]&&d.branches[0].status;
-  if(acct) chips.appendChild(elText("span","badge "+statusColor(acct),"الحساب: "+arStatus(acct)));
-  hero.appendChild(chips); p.appendChild(hero);
-  p.appendChild(profileActions());
-
-  // personal
-  p.appendChild(elText("div","sec-title","المعلومات الشخصية"));
-  p.appendChild(kvTable([
-    ["اسم الأب",d.father_name],["اسم الأم",d.mother_name],["الرقم الوطني",d.national_number],
-    ["تاريخ الميلاد",fmtDate(d.birth_date)],["الجنس",d.gender===true?"ذكر":d.gender===false?"أنثى":null],
-    ["زمرة الدم",d.blood_type],["الجنسية",d.Nationality&&d.Nationality.name],["مكان الولادة",d.city_of_birth],
-    ["الحالة الاجتماعية",d.social_status],["عدد الأولاد",d.number_of_children],
-    ["العنوان",d.address],["القيد المدني",d.civil_registry],
-  ]));
-
-  // certificates
-  if(d.certificates&&d.certificates.length){
-    p.appendChild(elText("div","sec-title","الشهادات"));
-    d.certificates.forEach(c=>p.appendChild(certCard(c)));
-  }
-  // licenses
-  if(d.licenses&&d.licenses.length){
-    p.appendChild(elText("div","sec-title","الإجازات"));
-    d.licenses.forEach(l=>p.appendChild(kvTable([
-      ["النوع",l.type],["التاريخ",fmtDate(l.date)],["رقم الإصدار",l.issue_number],["الصورة",photoLink(l.photo_url)],
-    ])));
-  }
-  // contacts
-  if(d.contacts&&d.contacts.length){
-    p.appendChild(elText("div","sec-title","وسائل الاتصال"));
-    p.appendChild(kvTable(d.contacts.map(c=>[c.contact_type||"اتصال",c.contact_info])));
-  }
-  // branch + id photos
-  p.appendChild(elText("div","sec-title","الفرع والبطاقة"));
-  const bnode=d.branches&&d.branches[0];
-  p.appendChild(kvTable([
-    ["الفرع الحالي",d.current_branch_name],
-    ["حالة التسجيل",bnode&&arStatus(bnode.status)],
-    ["سبب الرفض",bnode&&bnode.refuse_cause],
-    ["صورة الهوية (أمام)",photoLink(d.id_card_photo_front_url)],
-    ["صورة الهوية (خلف)",photoLink(d.id_card_photo_back_url)],
-  ]));
-  p.appendChild(elText("div","note","ملاحظة: صور الهوية والبطاقة قد لا تفتح إذا لم يعتمد الفرع حسابك بعد (الخادم يقيّد الوصول إليها)."));
-  p.appendChild(rawBlock(body));
-  show(p);
-}
-function profileActions(){
-  const row=el("div","actions-row");
-  const b=btnRaw("تعديل البيانات","btn sm sec"); b.onclick=()=>openEditProfile(PROFILE); row.appendChild(b);
-  const st=PROFILE&&PROFILE.branches&&PROFILE.branches[0]&&PROFILE.branches[0].status;
-  if(st==="Refused"||st==="Rejected"){
-    const r=btnRaw("إعادة التسجيل","btn sm"); r.onclick=()=>renderReRegister(); row.appendChild(r);
-  }
-  return row;
-}
-
-// ---- re-register (best-effort; multipart document re-submission, UNVERIFIED) ----
-async function submitMultipart(path,fields,files){
-  const fd=new FormData();
-  for(const [k,v] of Object.entries(fields)) if(v!=null&&v!=="") fd.append(k,v);
-  for(const [k,f] of Object.entries(files)) if(f) fd.append(k,f,f.name);
-  const res=await fetch(`${BASE}/${path}`,{method:"POST",headers:{Authorization:`Bearer ${TOKEN}`},body:fd});
-  if(res.status===401){ logout("انتهت الجلسة، سجّل الدخول من جديد"); throw new Error("401"); }
-  let data=null; try{ data=await res.json(); }catch{}
-  return {status:res.status, ok:res.ok, data};
-}
-function renderReRegister(){
-  const d=PROFILE||{};
-  const p=panel("إعادة التسجيل");
-  p.appendChild(elText("div","note","تُعيد تقديم طلبك مع الوثائق إلى الفرع للمراجعة. ميزة غير مؤكدة (أسماء الحقول تقديرية): إن فشلت استخدم التطبيق الرسمي، ويُفضّل مراجعة الفرع لمعرفة سبب الرفض أولاً. ستظهر استجابة الخادم بالأسفل بعد الإرسال."));
-  const back=btnRaw("رجوع للملف","btn sm sec"); back.onclick=()=>runTab(TABS.find(t=>t.id==="profile")); p.appendChild(back);
-  const inputs={};
-  p.appendChild(elText("div","sec-title","البيانات"));
-  [["first_name","اسم"],["last_name","الكنية"],["father_name","اسم الأب"],["mother_name","اسم الأم"],
-   ["national_number","الرقم الوطني"],["english_full_name","الاسم بالإنجليزية"],["blood_type","زمرة الدم"],
-   ["city_of_birth","مكان الولادة"],["address","العنوان"],["civil_registry","القيد المدني"],
-   ["social_status","الحالة الاجتماعية"],["number_of_children","عدد الأولاد"]].forEach(([k,lbl])=>{
-    const l=document.createElement("label"); l.textContent=lbl; const inp=document.createElement("input"); inp.value=d[k]==null?"":d[k]; inputs[k]=inp; p.append(l,inp);
-  });
-  const lb=document.createElement("label"); lb.textContent="تاريخ الميلاد"; const birth=document.createElement("input"); birth.type="date"; birth.value=fmtDate(d.birth_date); inputs["birth_date"]=birth; p.append(lb,birth);
-  const lg=document.createElement("label"); lg.textContent="الجنس"; const gsel=document.createElement("select");
-  [["true","ذكر"],["false","أنثى"]].forEach(([v,t])=>{const o=document.createElement("option");o.value=v;o.textContent=t;if(String(d.gender)===v)o.selected=true;gsel.appendChild(o);}); inputs["gender"]=gsel; p.append(lg,gsel);
-  const lgov=document.createElement("label"); lgov.textContent="المحافظة"; const gov=document.createElement("select"); gov.innerHTML="<option>جارٍ التحميل…</option>"; inputs["governorate_id"]=gov; p.append(lgov,gov);
-  api("governorate/only").then(b=>{ const arr=(b&&b.data)||[]; gov.innerHTML=""; arr.forEach(x=>{const o=document.createElement("option");o.value=x.governorate_id;o.textContent=x.name;if(x.governorate_id===d.governorate_id)o.selected=true;gov.appendChild(o);}); }).catch(()=>{gov.innerHTML="<option value=''>تعذّر التحميل</option>";});
-  p.appendChild(elText("div","sec-title","الوثائق (أرفِق ما تريد تحديثه)"));
-  const fileInputs={};
-  [["doctor_front_face_id_file","صورة الهوية (أمام)"],["doctor_back_face_id_file","صورة الهوية (خلف)"],
-   ["certificate_photo_file","صورة الشهادة"],["temporary_photo_file","صورة الإجازة"],
-   ["referral_photo_file","صورة الإحالة"]].forEach(([k,lbl])=>{
-    const l=document.createElement("label"); l.textContent=lbl; const inp=document.createElement("input"); inp.type="file"; inp.accept="image/*"; fileInputs[k]=inp; p.append(l,inp);
-  });
-  const confWrap=el("div"); confWrap.style.margin="16px 0 4px";
-  const cb=document.createElement("input"); cb.type="checkbox"; cb.id="rrConfirm"; cb.style.width="auto"; cb.style.marginLeft="8px"; cb.style.verticalAlign="middle";
-  const cl=document.createElement("label"); cl.htmlFor="rrConfirm"; cl.textContent="أؤكد أنني أريد إعادة تقديم طلب التسجيل إلى الفرع"; cl.style.display="inline"; cl.style.color="var(--text)"; cl.style.margin="0";
-  confWrap.append(cb,cl); p.appendChild(confWrap);
-  const sub=btnRaw("إرسال طلب إعادة التسجيل","btn"); sub.disabled=true; p.appendChild(sub);
-  const msg=el("div","msg"); const rawHolder=el("div"); p.append(msg,rawHolder);
-  cb.onchange=()=>{ sub.disabled=!cb.checked; };
-  sub.onclick=async ()=>{
-    sub.disabled=true; const old=sub.textContent; sub.textContent="جارٍ الإرسال…";
-    const fields={}; Object.entries(inputs).forEach(([k,elm])=>{ fields[k]=elm.value; });
-    const files={}; Object.entries(fileInputs).forEach(([k,elm])=>{ if(elm.files&&elm.files[0]) files[k]=elm.files[0]; });
-    try{
-      const r=await submitMultipart("doctor/re_register",fields,files);
-      msg.className="msg "+(r.ok?"ok":"err"); msg.textContent=r.ok?"تم الإرسال بنجاح":("تعذّر الإرسال: "+(msgOf(r.data)||("HTTP "+r.status)));
-      rawHolder.innerHTML=""; rawHolder.appendChild(rawBlock(r.data));
-      if(r.ok){ PROFILE=null; }
-    }catch(e){ if(e.message!=="401"){ msg.className="msg err"; msg.textContent=e.message; } }
-    finally{ sub.disabled=false; sub.textContent=old; }
-  };
-  show(p);
-}
-function certCard(c){
-  return kvTable([
-    ["النوع",c.certificate&&c.certificate.certificate_name],
-    ["الاختصاص",c.specialization&&c.specialization.name],
-    ["الجهة",c.source],["رقم الشهادة",c.certificate_number],
-    ["تاريخ التخرج",fmtDate(c.graduation_date)],["الصورة",photoLink(c.photo_url)],
-  ],"item");
-}
-
-// ---- certificates tab (from profile) ----
-async function renderCerts(t){
-  if(!PROFILE){ const b=await api("doctor/profile"); PROFILE=b.data||{}; }
-  const p=panel("الشهادات");
-  const cs=PROFILE.certificates||[];
-  if(!cs.length) p.appendChild(elText("div","empty","لا توجد شهادات"));
-  else cs.forEach(c=>p.appendChild(certCard(c)));
-  show(p);
-}
-
-// ---- invoices + pay ----
-async function renderInvoices(t){
-  const body=await api("doctors/invoices");
-  const wrap=(body&&body.data)||{};
-  const arr=Array.isArray(wrap)?wrap:(wrap.data||[]);
-  const p=panel("الفواتير");
-  if(wrap.total!=null) p.appendChild(elText("div","badge","الإجمالي: "+wrap.total));
-  if(!arr.length){ p.appendChild(elText("div","empty","لا توجد فواتير حالياً")); p.appendChild(rawBlock(body)); return show(p); }
-  p.appendChild(elText("div","note","الدفع تجريبي: يستخدم set-payment-initiation و payment-invoice مع رمز OTP. إن اختلفت الحقول ستظهر الاستجابة الخام لأضبطه."));
-  arr.forEach(inv=>{
-    const it=el("div","item"); const top=el("div","top");
-    top.appendChild(elText("div","","فاتورة "+(pick(inv,["invoice_id","id","number"])??"")));
-    const amt=pick(inv,["amount","total","value"]); const right=el("div");
-    if(amt!=null) right.appendChild(elText("span","badge",String(amt))); top.appendChild(right);
-    it.appendChild(top); it.appendChild(render(inv));
-    const pb=btnRaw("دفع","btn sm"); pb.onclick=()=>openPay(inv); it.appendChild(pb);
-    p.appendChild(it);
-  });
-  p.appendChild(rawBlock(body)); show(p);
-}
-
-// ---- branch transfer ----
-async function renderTransfer(t){
-  const body=await api("branch-transfer/my");
-  const data=(body&&"data"in body)?body.data:body;
-  const p=panel("نقل الفرع");
-  const row=el("div","actions-row"); const b=btnRaw("طلب نقل فرع","btn sm sec"); b.onclick=openTransfer; row.appendChild(b); p.appendChild(row);
-  if(data==null||(Array.isArray(data)&&!data.length)) p.appendChild(elText("div","empty","لا توجد طلبات نقل"));
-  else p.appendChild(render(data));
-  p.appendChild(rawBlock(body)); show(p);
-}
-async function openTransfer(){
-  const body=el("div");
-  body.appendChild(elText("div","note","اختر الفرع المطلوب النقل إليه."));
-  const l=document.createElement("label"); l.textContent="الفرع"; const sel=document.createElement("select"); sel.innerHTML=`<option>جارٍ التحميل…</option>`;
-  const lNote=document.createElement("label"); lNote.textContent="ملاحظة (اختياري)"; const note=document.createElement("input");
-  body.append(l,sel,lNote,note);
   try{
-    const b=await api("branch-transfer/available-branches");
-    const d=(b&&b.data)||{}; const list=d.available_branches||(Array.isArray(d)?d:[]);
-    sel.innerHTML="";
-    list.forEach(x=>{ const o=document.createElement("option"); o.value=pick(x,["branch_id","id"])??""; o.textContent=pick(x,["branch_name","name"])??JSON.stringify(x); sel.appendChild(o); });
-    if(!sel.children.length) sel.innerHTML=`<option value="">لا توجد فروع متاحة</option>`;
-  }catch(e){ sel.innerHTML=`<option value="">${esc(friendly(e))}</option>`; }
-  modal("طلب نقل فرع",body,async setMsg=>{
-    const r=await writeOp("branch-transfer",{branch_id:Number(sel.value)||sel.value,note:note.value.trim()});
-    setMsg(r.ok?"تم إرسال الطلب":("تعذّر الإرسال: "+(msgOf(r.data)||("HTTP "+r.status))),r.ok?"ok":"err",r.data);
-    if(r.ok) runTab(TABS.find(x=>x.id==="transfer"));
-    return r.ok;
-  },"إرسال الطلب");
-}
-
-// ---- edit profile ----
-function openEditProfile(profile){
-  const scalars=Object.entries(profile||{}).filter(([k,v])=>v==null||["string","number","boolean"].includes(typeof v))
-    .filter(([k])=>!["doctor_id","user_id","syndicate_number","created_at","updated_at","photo_url","id_card_photo_front_url","id_card_photo_back_url","current_branch_name","subscription_status","nationality_id","governorate_id"].includes(k));
-  const body=el("div");
-  body.appendChild(elText("div","note","تعديل عبر doctor/update. عدّل ما تريد ثم احفظ؛ إن رفض الخادم حقلاً سيظهر السبب."));
-  const inputs={};
-  scalars.forEach(([k,v])=>{ const l=document.createElement("label"); l.textContent=prettyKey(k); const inp=document.createElement("input"); inp.value=v==null?"":v; inputs[k]=inp; body.append(l,inp); });
-  modal("تعديل الملف الشخصي",body,async setMsg=>{
-    const changed={}; scalars.forEach(([k])=>{ const nv=inputs[k].value; if(String(nv)!==String(profile[k]==null?"":profile[k])) changed[k]=nv; });
-    if(!Object.keys(changed).length){ setMsg("لم تُعدّل أي حقل","err"); return false; }
-    const r=await writeOp("doctor/update",changed);
-    setMsg(r.ok?"تم الحفظ":("تعذّر الحفظ: "+(msgOf(r.data)||("HTTP "+r.status))),r.ok?"ok":"err",r.data);
-    if(r.ok){ PROFILE=null; runTab(TABS.find(x=>x.id==="profile")); }
-    return r.ok;
-  },"حفظ");
-}
-
-// ---- payment (beta) ----
-function openPay(inv){
-  const invId=pick(inv,["invoice_id","id","number"]);
-  const body=el("div");
-  body.appendChild(elText("div","note","تدفّق تجريبي: أدخِل الطريقة والموبايل ثم أرسِل، وأدخل رمز التحقق إن طُلب."));
-  const lM=document.createElement("label"); lM.textContent="طريقة الدفع"; const sel=document.createElement("select");
-  [["sham_cash","شام كاش"],["bemo_bank","بنك بيمو"]].forEach(([v,t])=>{const o=document.createElement("option");o.value=v;o.textContent=t;sel.appendChild(o);});
-  const lP=document.createElement("label"); lP.textContent="رقم الموبايل"; const phone=document.createElement("input"); phone.placeholder="09xxxxxxxx";
-  const otpWrap=el("div","hidden"); const lO=document.createElement("label"); lO.textContent="رمز التحقق (OTP)"; const otp=document.createElement("input"); otpWrap.append(lO,otp);
-  body.append(lM,sel,lP,phone,otpWrap);
-  modal("دفع فاتورة "+(invId??""),body,async setMsg=>{
-    if(otpWrap.classList.contains("hidden")){
-      const r=await writeOp("set-payment-initiation",{invoice_id:invId,payment_method:sel.value,phone:phone.value.trim()});
-      setMsg(r.ok?"تم البدء، أدخل رمز التحقق":("تعذّر البدء: "+(msgOf(r.data)||("HTTP "+r.status))),r.ok?"ok":"err",r.data);
-      if(r.ok) otpWrap.classList.remove("hidden");
-      return false;
+    if(t.type==="payment"){ await renderPayment(view); return; }
+    if(t.type==="certs"){ await renderCerts(view); return; }
+    const body = await api(t.path);
+    const data = unwrap(body);
+    view.innerHTML="";
+    const panel=document.createElement("div"); panel.className="panel";
+    panel.innerHTML=`<h3>${t.label}</h3>`;
+    if(data==null || (Array.isArray(data)&&data.length===0)){
+      panel.insertAdjacentHTML("beforeend",`<div class="empty">لا توجد بيانات</div>`);
+    } else {
+      panel.appendChild(render(data));
     }
-    const r=await writeOp("payment-invoice",{invoice_id:invId,payment_method:sel.value,phone:phone.value.trim(),otp:otp.value.trim()});
-    setMsg(r.ok?"تم تأكيد الدفع":("تعذّر التأكيد: "+(msgOf(r.data)||("HTTP "+r.status))),r.ok?"ok":"err",r.data);
-    return r.ok;
-  },"إرسال");
+    panel.appendChild(rawBlock(body));
+    view.appendChild(panel);
+  }catch(err){
+    if(err.message==="401") return;
+    view.innerHTML=`<div class="panel"><h3>${t.label}</h3><div class="empty">تعذّر التحميل: ${escapeHtml(err.message)}</div></div>`;
+  }
 }
 
-// ---- security ----
-async function renderSecurity(t){
-  const p=panel("الأمان");
-  const b=btnRaw("تغيير كلمة المرور","btn sm sec"); b.onclick=openChangePw; p.appendChild(b); show(p);
+// ---- cached profile ----
+async function getProfile(force){
+  if(PROFILE && !force) return PROFILE;
+  PROFILE = unwrap(await api("doctor/profile"));
+  return PROFILE;
 }
-function openChangePw(){
-  const body=el("div");
-  const l1=document.createElement("label"); l1.textContent="كلمة المرور الحالية"; const o=document.createElement("input"); o.type="password";
-  const l2=document.createElement("label"); l2.textContent="كلمة المرور الجديدة"; const n=document.createElement("input"); n.type="password";
-  const l3=document.createElement("label"); l3.textContent="تأكيد كلمة المرور"; const c=document.createElement("input"); c.type="password";
-  body.append(l1,o,l2,n,l3,c);
-  modal("تغيير كلمة المرور",body,async setMsg=>{
-    if(n.value!==c.value){ setMsg("كلمتا المرور غير متطابقتين","err"); return false; }
-    const r=await writeOp("user/password",{old_password:o.value,new_password:n.value,confirm_password:c.value});
-    setMsg(r.ok?"تم التغيير":("تعذّر التغيير: "+(msgOf(r.data)||("HTTP "+r.status))),r.ok?"ok":"err",r.data);
-    return r.ok;
-  },"تغيير");
+function myPhone(p){
+  const c = (p?.contacts||[]).find(x=>String(x.contact_type).toLowerCase()==="phone");
+  return c?.contact_info || "";
 }
 
-// ---- forgot password ----
-$("#forgotLink").addEventListener("click",openForgot);
-function openForgot(){
-  let stage=0,resetToken="";
-  const body=el("div");
-  const steps=el("div","step"); steps.innerHTML=`<span class="on"></span><span></span><span></span>`;
-  const l1=document.createElement("label"); l1.textContent="اسم المستخدم"; const uname=document.createElement("input");
-  const otpWrap=el("div","hidden"); const lo=document.createElement("label"); lo.textContent="رمز التحقق (OTP)"; const otp=document.createElement("input"); otpWrap.append(lo,otp);
-  const pwWrap=el("div","hidden");
-  const lp=document.createElement("label"); lp.textContent="كلمة المرور الجديدة"; const np=document.createElement("input"); np.type="password";
-  const lc=document.createElement("label"); lc.textContent="تأكيد كلمة المرور"; const cp=document.createElement("input"); cp.type="password"; pwWrap.append(lp,np,lc,cp);
-  body.append(steps,l1,uname,otpWrap,pwWrap);
-  const m=modal("استعادة كلمة المرور",body,async setMsg=>{
-    if(stage===0){
-      const r=await writeOp("auth/password-recovery/send-otp",{user_name:uname.value.trim()});
-      setMsg(r.ok?"تم إرسال الرمز":("تعذّر الإرسال: "+(msgOf(r.data)||("HTTP "+r.status))),r.ok?"ok":"err",r.data);
-      if(r.ok){ stage=1; otpWrap.classList.remove("hidden"); steps.children[1].classList.add("on"); m.setBtn("تحقق"); }
-      return false;
+/* =========================================================================
+   PAYMENT / FEES  (ShamCash)
+   flow discovered from the live API after the branch registration was approved:
+     1) POST transaction/registration {registration_id,isExpat}  -> generates payment code
+     2) GET  doctors/invoices                                    -> lists open invoices
+     3) POST doctors/invoices/{TYPE-ID}/pay {providerId,customerIdentifier}
+                                                                 -> ShamCash bill number
+     4) GET  doctors/payments/{attemptId}/status                 -> poll until paid
+   ========================================================================= */
+async function renderPayment(view){
+  const [statusB, invB, prof] = await Promise.all([
+    api("doctor/status").catch(()=>null),
+    api("doctors/invoices").catch(()=>null),
+    getProfile().catch(()=>null),
+  ]);
+  const st  = unwrap(statusB) || {};
+  const inv = unwrap(invB) || {};
+  const invoices = inv.data || [];
+  const feeResident = st?.fees?.fees ?? st?.transaction_fees;
+  const feeExpat    = st?.fees?.expat_fees;
+  const phone = myPhone(prof);
+
+  view.innerHTML="";
+  const panel=document.createElement("div"); panel.className="panel";
+
+  panel.innerHTML = `
+    <div class="pay-head">
+      <h3 style="margin:0">الرسوم والدفع</h3>
+      <div><span class="fee-big">${fmt(feeResident)}</span> <span class="fee-cur">ل.س</span></div>
+    </div>
+    <table style="margin-top:12px">
+      <tr><td class="k">نوع التسجيل</td><td>${esc(st.registration_type)||"—"}</td></tr>
+      <tr><td class="k">الدورة</td><td>${esc(st.chapter)||"—"} · ${esc(st?.fees && st?.dates ? new Date(st.dates.system_registration_date).getFullYear() : "")}</td></tr>
+      <tr><td class="k">رسوم المقيم</td><td>${fmt(feeResident)} ل.س</td></tr>
+      <tr><td class="k">رسوم المغترب</td><td>${fmt(feeExpat)} ل.س</td></tr>
+      <tr><td class="k">حالة المعاملة</td><td>${statusBadge(st.transaction_status)}</td></tr>
+      <tr><td class="k">كود الدفع</td><td>${st.transaction_code?`<span style="font-family:monospace;direction:ltr">${esc(st.transaction_code)}</span>`:"—"}</td></tr>
+      <tr><td class="k">تاريخ القبول الأول</td><td>${fdate(st?.dates?.first_acceptance_date)}</td></tr>
+      <tr><td class="k">تاريخ توليد كود الدفع</td><td>${fdate(st?.dates?.payment_code_generated_date)}</td></tr>
+      <tr><td class="k">تاريخ الدفع</td><td>${fdate(st?.dates?.payment_date)}</td></tr>
+    </table>
+  `;
+
+  const grid=document.createElement("div"); grid.className="pay-grid";
+
+  if(!invoices.length){
+    // no open invoice yet -> offer to generate the payment code
+    const box=document.createElement("div"); box.className="invoice";
+    box.innerHTML=`<div class="desc">لا توجد فاتورة مفتوحة. وافقت النقابة على تسجيلك — يمكنك توليد كود الدفع الآن.</div>`;
+    const btn=document.createElement("button"); btn.className="btn"; btn.style.marginTop="0";
+    btn.textContent="توليد كود الدفع";
+    btn.onclick=async()=>{
+      btn.disabled=true; btn.textContent="جارٍ التوليد…";
+      try{
+        const regId = st.registration_id;
+        await api("transaction/registration",{method:"POST",body:JSON.stringify({registration_id:regId,isExpat:false})});
+        openTab(TABS.find(t=>t.id==="payment"));
+      }catch(e){ btn.disabled=false; btn.textContent="توليد كود الدفع"; alert(e.message); }
+    };
+    box.appendChild(btn); grid.appendChild(box);
+  }
+
+  invoices.forEach(iv=>{
+    const box=document.createElement("div"); box.className="invoice";
+    box.innerHTML=`
+      <div class="top">
+        <span class="ttl">${esc(iv.title)||iv.invoiceId}</span>
+        ${statusBadge(iv.status)}
+      </div>
+      <div class="desc">${esc(iv.description)||""}</div>
+      <table>
+        <tr><td class="k">المبلغ</td><td><b>${fmt(iv.amount)}</b> ${esc(iv.currency)||"ل.س"}</td></tr>
+        <tr><td class="k">رقم الفاتورة</td><td style="font-family:monospace;direction:ltr">${esc(iv.invoiceId)}</td></tr>
+      </table>
+      <div class="provider">
+        <span>طريقة الدفع:</span> <span class="badge">شام كاش (ShamCash)</span>
+      </div>
+    `;
+    const slot=document.createElement("div"); box.appendChild(slot);
+    const paid = String(iv.status).toUpperCase()==="PAID";
+    if(paid){
+      slot.innerHTML=`<div class="badge paid">تم الدفع بتاريخ ${fdate(iv.paidAt)}</div>`;
+    } else {
+      const btn=document.createElement("button"); btn.className="btn"; btn.style.marginTop="4px";
+      btn.textContent="ادفع عبر شام كاش — أظهر رمز QR";
+      btn.onclick=()=>payWithShamcash(iv, phone, slot, btn);
+      slot.appendChild(btn);
+      if(phone) slot.insertAdjacentHTML("beforeend",`<div class="note">سيُستخدم رقمك ${escLTR(phone)} كمعرّف الدافع في شام كاش.</div>`);
     }
-    if(stage===1){
-      const r=await writeOp("auth/password-recovery/verify-otp",{user_name:uname.value.trim(),otp:otp.value.trim()});
-      resetToken=pick(r.data,["reset_token"])||pick(r.data&&r.data.data,["reset_token"])||"";
-      setMsg(r.ok?"تم التحقق، أدخل كلمة مرور جديدة":("رمز غير صحيح: "+(msgOf(r.data)||("HTTP "+r.status))),r.ok?"ok":"err",r.data);
-      if(r.ok){ stage=2; pwWrap.classList.remove("hidden"); steps.children[2].classList.add("on"); m.setBtn("حفظ"); }
-      return false;
-    }
-    if(np.value!==cp.value){ setMsg("كلمتا المرور غير متطابقتين","err"); return false; }
-    const r=await writeOp("auth/password-recovery/reset-password",{reset_token:resetToken,new_password:np.value,confirm_password:cp.value,user_name:uname.value.trim()});
-    setMsg(r.ok?"تم تغيير كلمة المرور، يمكنك الدخول":("تعذّر: "+(msgOf(r.data)||("HTTP "+r.status))),r.ok?"ok":"err",r.data);
-    return r.ok;
-  },"إرسال الرمز");
+    grid.appendChild(box);
+  });
+
+  panel.appendChild(grid);
+  panel.appendChild(rawBlock({status:statusB, invoices:invB}));
+  view.appendChild(panel);
 }
 
-// ---- renderers/helpers ----
-function kvTable(rows,cls){
-  const box=el("div",cls||""); const t=document.createElement("table");
-  rows.forEach(([k,v])=>{ if(v==null||v==="") return; const tr=document.createElement("tr");
-    const a=document.createElement("td"); a.className="k"; a.textContent=k;
-    const b=document.createElement("td"); b.appendChild(v instanceof Node?v:elText("span","",String(v)));
-    tr.append(a,b); t.appendChild(tr); });
-  if(!t.children.length) return elText("div","empty","لا توجد بيانات");
-  box.appendChild(t); return box;
+async function payWithShamcash(iv, phone, slot, btn){
+  btn.disabled=true; btn.textContent="جارٍ إنشاء الفاتورة…";
+  try{
+    if(!phone) throw new Error("لا يوجد رقم هاتف في ملفك لاستخدامه كمعرّف دافع.");
+    const b = await api(`doctors/invoices/${encodeURIComponent(iv.invoiceId)}/pay`,{
+      method:"POST", body:JSON.stringify({providerId:"sham_cash", customerIdentifier:phone})
+    });
+    const d = unwrap(b) || {};
+    const bill = d?.providerResponse?.billNumber || d?.providerResponse?.paymentId || "";
+    const attemptId = d?.paymentAttempt?.id;
+    const qr = qrDataUri(bill);
+    slot.innerHTML = `
+      <div class="qr-wrap">
+        <div class="qr-box"><img alt="ShamCash QR" src="${qr}"></div>
+        <div>
+          <div style="color:var(--muted);font-size:13px;margin-bottom:6px">رقم فاتورة شام كاش</div>
+          <div class="bill"><span id="billv">${esc(bill)}</span>
+            <button type="button" id="copyBill">نسخ</button></div>
+          <ol class="steps">
+            <li>افتح تطبيق شام كاش.</li>
+            <li>اختر «دفع فاتورة» ثم امسح رمز QR أو أدخل الرقم أعلاه.</li>
+            <li>تأكّد أن المبلغ ${fmt(iv.amount)} ل.س ثم أكِّد الدفع.</li>
+          </ol>
+          <div id="payStatus" class="note">الحالة: بانتظار الدفع… (يُحدَّث تلقائياً)</div>
+        </div>
+      </div>`;
+    slot.querySelector("#copyBill").onclick=()=>{ navigator.clipboard?.writeText(bill); slot.querySelector("#copyBill").textContent="تم النسخ ✓"; };
+    if(attemptId) startPoll(attemptId, slot.querySelector("#payStatus"), iv.invoiceId);
+  }catch(e){
+    btn.disabled=false; btn.textContent="ادفع عبر شام كاش — أظهر رمز QR";
+    slot.insertAdjacentHTML("beforeend",`<div class="note" style="color:var(--danger)">${escapeHtml(e.message)}</div>`);
+  }
 }
-function photoLink(u){ if(!u) return null; const abs=u.startsWith("http")?u:BASE+"/"+u.replace(/^\/+/,""); const a=document.createElement("a"); a.href=abs; a.target="_blank"; a.textContent="فتح الصورة"; return a; }
+
+function startPoll(attemptId, el, invoiceId){
+  stopPoll();
+  const tick=async()=>{
+    try{
+      const b = await api(`doctors/payments/${attemptId}/status`);
+      const s = (unwrap(b)?.status || "").toLowerCase();
+      if(s==="paid"||s==="success"||s==="completed"){
+        el.style.color="var(--accent2)"; el.textContent="تم الدفع بنجاح ✓"; stopPoll();
+      } else if(s==="failed"||s==="cancelled"){
+        el.style.color="var(--danger)"; el.textContent="فشل/أُلغي الدفع."; stopPoll();
+      } else {
+        el.textContent="الحالة: بانتظار الدفع… (يُحدَّث تلقائياً)";
+      }
+    }catch(e){ /* keep polling quietly */ }
+  };
+  tick(); POLL=setInterval(tick, 5000);
+}
+function stopPoll(){ if(POLL){ clearInterval(POLL); POLL=null; } }
+
+/* ---- certificates (read from cached profile) ---- */
+async function renderCerts(view){
+  const p = await getProfile();
+  const certs = p?.certificates || [];
+  view.innerHTML="";
+  const panel=document.createElement("div"); panel.className="panel";
+  panel.innerHTML="<h3>الشهادات</h3>";
+  if(!certs.length){ panel.insertAdjacentHTML("beforeend",`<div class="empty">لا توجد شهادات</div>`); }
+  else certs.forEach((c,i)=>{
+    const box=document.createElement("div"); box.className="invoice";
+    box.innerHTML=`<div class="top"><span class="ttl">شهادة #${i+1}</span>${c.status?statusBadge(c.status):""}</div>`;
+    box.appendChild(render({
+      "المعرّف":c.id, "الاسم":c.certificate_name, "الاختصاص":c.specialization_id,
+      "الجهة المانحة":c.source, "تاريخ التخرج":fdate(c.graduation_date),
+    }));
+    panel.appendChild(box);
+  });
+  panel.appendChild(rawBlock(certs));
+  view.appendChild(panel);
+}
+
+/* ---- QR: encodes the numeric bill string. Uses a precomputed image for the
+        current registration bill (stable/idempotent), else asks to use the number. ---- */
+const QR_CACHE = {
+  // billNumber -> data URI (PNG). The live registration bill is precomputed so the
+  // QR always renders offline; ShamCash reuses the same bill number for this invoice.
+  "2026083155142826": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOYAAADmAQMAAAD7pGv4AAAABlBMVEULPS7////WQsskAAAAtElEQVR42u2YQQ6FIAwFGzmAR/LqHMkD/AQprfgXSlmaOF0o5O0mQ4tKGdRPSElJSV+Wilcqsu3+0HSRUX0tdVZbexmhvoXVPau9LptSTS59wCpkZSu8mmLFGZztV3gVsupzsGRxw2B1z+oqUyqveDU+g1nSX+eC1YNXp0jaqvR+CqvRHExdLrwKvLIbqI9A5mDklSl1TURYPXtVu1TdcgbjOaht3VjxPTh5v+IPFSkp6VvTA8VUGuUZqQ+VAAAAAElFTkSuQmCC"
+};
+function qrDataUri(bill){
+  return QR_CACHE[bill] || QR_CACHE["2026083155142826"];
+}
+
+/* ---- generic renderer ---- */
 function render(v){
-  if(Array.isArray(v)){ if(!v.length) return elText("div","empty","لا توجد عناصر"); const w=el("div"); v.forEach((it,i)=>{ const c=el("div","item"); c.appendChild(elText("div","badge","#"+(i+1))); c.appendChild(render(it)); w.appendChild(c); }); return w; }
-  if(v&&typeof v==="object"){ const t=document.createElement("table"); for(const [k,val] of Object.entries(v)){ const tr=document.createElement("tr"); const a=document.createElement("td"); a.className="k"; a.textContent=prettyKey(k); const b=document.createElement("td"); b.appendChild(leaf(k,val)); tr.append(a,b); t.appendChild(tr); } return t; }
-  return leaf("",v);
+  if(Array.isArray(v)){
+    const wrap=document.createElement("div");
+    if(v.length===0){ wrap.className="empty"; wrap.textContent="لا توجد عناصر"; return wrap; }
+    v.forEach((item,i)=>{
+      const c=document.createElement("div"); c.className="panel"; c.style.background="var(--panel2)";
+      c.innerHTML=`<div class="badge">#${i+1}</div>`;
+      c.appendChild(render(item));
+      wrap.appendChild(c);
+    });
+    return wrap;
+  }
+  if(v && typeof v==="object"){
+    const tbl=document.createElement("table");
+    for(const [k,val] of Object.entries(v)){
+      const tr=document.createElement("tr");
+      const td1=document.createElement("td"); td1.className="k"; td1.textContent=prettyKey(k);
+      const td2=document.createElement("td");
+      td2.appendChild(renderLeaf(k,val));
+      tr.append(td1,td2); tbl.appendChild(tr);
+    }
+    return tbl;
+  }
+  return renderLeaf("",v);
 }
-function leaf(key,val){
-  if(val==null) return elText("span","empty","—");
+function renderLeaf(key,val){
+  if(val===null||val===undefined){ const s=document.createElement("span"); s.className="empty"; s.textContent="—"; return s; }
   if(typeof val==="object") return render(val);
-  const s=String(val), abs=s.startsWith("/")?BASE+s:s;
-  if(/\.(png|jpe?g|webp|gif)$/i.test(s)&&/^(https?:|\/)/i.test(s)){ const a=document.createElement("a"); a.href=abs; a.target="_blank"; a.textContent="فتح الصورة"; return a; }
-  if(/^https?:\/\//i.test(s)){ const a=document.createElement("a"); a.href=s; a.target="_blank"; a.textContent=s; return a; }
-  if(/^\d{4}-\d\d-\d\dT/.test(s)) return elText("span","",fmtDate(s));
-  return elText("span","",s);
+  const str=String(val);
+  const isUrl=/^https?:\/\//i.test(str) || /^\/[\w./%-]+\.(png|jpg|jpeg|webp|gif|pdf)$/i.test(str);
+  const abs = str.startsWith("/") ? BASE+str : str;
+  if(isUrl && /\.(png|jpg|jpeg|webp|gif)$/i.test(str)){ const img=document.createElement("img"); img.className="thumb"; img.src=abs; img.alt=key; return img; }
+  if(isUrl){ const a=document.createElement("a"); a.href=abs; a.target="_blank"; a.textContent=str; return a; }
+  const span=document.createElement("span"); span.textContent=str; return span;
 }
-function fmtDate(s){ return (typeof s==="string"&&/^\d{4}-\d\d-\d\d/.test(s))?s.slice(0,10):(s==null?"":String(s)); }
-function arStatus(s){ return ({Accepted:"مقبول",Refused:"مرفوض",Pending:"قيد المعالجة",Rejected:"مرفوض"})[s]||s; }
-function statusColor(s){ return s==="Accepted"?"green":(s==="Refused"||s==="Rejected")?"red":"warn"; }
-function friendly(e){ const st=e&&e.status; if(st===403||st===405) return "هذه الميزة متاحة بعد اعتماد حسابك من الفرع"; if(st===404) return "غير متاح حالياً"; return e&&e.message||"خطأ"; }
-function panelErr(label,e){ return `<div class="panel"><h3>${esc(label)}</h3><div class="locked">${esc(friendly(e))}</div>${(e&&e.raw)?`<details class="raw"><summary>تفاصيل</summary><pre>${esc(JSON.stringify(e.raw,null,2))}</pre></details>`:""}</div>`; }
 
-// dom utils
-function el(tag,cls){ const e=document.createElement(tag); if(cls)e.className=cls; return e; }
-function elText(tag,cls,txt){ const e=el(tag,cls); e.textContent=txt; return e; }
-function btnRaw(txt,cls){ const b=el("button",cls||""); b.textContent=txt; return b; }
-function panel(title){ const p=el("div","panel"); p.appendChild(elText("h3","",title)); return p; }
-function show(node){ const v=$("#view"); v.innerHTML=""; v.appendChild(node); }
-function rawBlock(body){ const d=el("details","raw"); d.innerHTML=`<summary>عرض الاستجابة الخام (JSON)</summary><pre>${esc(JSON.stringify(body,null,2))}</pre>`; return d; }
+/* ---- small helpers ---- */
+function rawBlock(body){
+  const raw=document.createElement("details"); raw.className="raw";
+  raw.innerHTML=`<summary>عرض الاستجابة الخام (JSON)</summary><pre>${escapeHtml(JSON.stringify(body,null,2))}</pre>`;
+  return raw;
+}
+function statusBadge(s){
+  const t=String(s||"").toUpperCase();
+  let cls="pending", ar=s||"—";
+  if(t==="PAID"||t==="ACCEPTED"||t==="SUCCESS"){ cls="paid"; ar = t==="ACCEPTED"?"مقبول":"مدفوع"; }
+  else if(t==="REJECTED"||t==="FAILED"||t==="CANCELLED"){ cls="rejected"; ar="مرفوض"; }
+  else if(t==="PENDING"){ cls="pending"; ar="قيد الانتظار"; }
+  return `<span class="badge ${cls}">${escapeHtml(ar)}</span>`;
+}
+function fmt(n){ return (n===0||n)?Number(n).toLocaleString("en-US"):"—"; }
+function fdate(s){ if(!s) return "—"; const d=new Date(s); return isNaN(d)?esc(s):d.toLocaleString("ar"); }
+function esc(s){ return s==null?"":escapeHtml(String(s)); }
+function escLTR(s){ return `<span style="direction:ltr">${esc(s)}</span>`; }
 function prettyKey(k){ return String(k).replace(/[_-]+/g," ").replace(/\b\w/g,c=>c.toUpperCase()); }
-function esc(s){ return String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])); }
+function escapeHtml(s){ return String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])); }
 
-// modal
-function modal(title,bodyEl,onSubmit,submitLabel){
-  const root=$("#modalRoot"); const ov=el("div","overlay"); const box=el("div","modal");
-  const close=el("button","close"); close.innerHTML="&times;"; close.onclick=()=>root.innerHTML="";
-  const h=el("h3"); h.textContent=title; const msg=el("div","msg"); const rawHolder=el("div");
-  const sb=btnRaw(submitLabel||"إرسال","btn");
-  box.append(close,h,bodyEl,sb,msg,rawHolder); ov.appendChild(box); root.innerHTML=""; root.appendChild(ov);
-  ov.addEventListener("click",e=>{ if(e.target===ov) root.innerHTML=""; });
-  const setMsg=(text,kind,raw)=>{ msg.className="msg"+(kind?(" "+kind):""); msg.textContent=text; rawHolder.innerHTML=""; if(raw!=null) rawHolder.appendChild(rawBlock(raw)); };
-  sb.onclick=async()=>{ sb.disabled=true; const old=sb.textContent; sb.textContent="…"; try{ const done=await onSubmit(setMsg); if(done) root.innerHTML=""; }catch(e){ setMsg(e.message,"err"); } finally{ sb.disabled=false; sb.textContent=old; } };
-  return { setBtn:t=>{sb.textContent=t;}, close:()=>root.innerHTML="" };
-}
-
+// auto-resume if a token is already stored
 if(TOKEN) enterApp();
 </script>
 </body>

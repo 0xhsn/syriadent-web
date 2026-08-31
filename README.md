@@ -1,6 +1,7 @@
-# syriadent-web
+# SyriaDent web client
 
-Web client for the Syrian Dental Syndicate account. Open the site, log in with
-your app credentials, and view your profile, certificates, invoices, payments,
-and notifications. Talks directly to the official API; your login token is kept
-only in your own browser (localStorage), never on the server.
+An unofficial browser client for the Syrian Dental Syndicate account portal
+(`نقابة أطباء الأسنان في سورية`). Log in with your app credentials to view your
+profile, registration status, certificates, and pay the registration fee via ShamCash.
+
+Talks directly to `https://api.syriadent.org.sy` from the browser — no backend.
