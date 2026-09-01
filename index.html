@@ -42,8 +42,8 @@
   .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:16px}
   .panel h3{margin:0 0 12px;font-size:15px}
   .loading{color:var(--muted);font-size:14px;padding:14px 0}
-  table{width:100%;border-collapse:collapse;font-size:14px}
-  td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  table{width:100%;border-collapse:collapse;font-size:14px;table-layout:fixed}
+  td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top;overflow-wrap:anywhere;word-break:break-word}
   td.k{color:var(--muted);width:40%;font-size:13px}
   .kv-nested{margin:0;padding:0}
   .badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;background:var(--panel2);border:1px solid var(--line)}
@@ -69,12 +69,32 @@
   .provider{display:flex;align-items:center;gap:8px;margin:6px 0 12px}
   .provider img{width:26px;height:26px;border-radius:6px;background:#fff;padding:2px}
   .qr-wrap{display:flex;flex-wrap:wrap;gap:18px;align-items:center;margin-top:6px}
-  .qr-box{background:#fff;padding:12px;border-radius:12px;display:grid;place-items:center}
-  .qr-box img{width:190px;height:190px;image-rendering:pixelated}
-  .bill{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:20px;letter-spacing:1px;direction:ltr;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:inline-flex;gap:10px;align-items:center}
-  .bill button{padding:5px 10px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--text);font-size:12px}
+  .qr-info{flex:1 1 220px;min-width:0}
+  .qr-box{background:#fff;padding:12px;border-radius:12px;display:grid;place-items:center;margin-inline:auto}
+  .qr-box img{width:190px;max-width:60vw;height:auto;aspect-ratio:1;image-rendering:pixelated}
+  .bill{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:clamp(16px,5.2vw,20px);letter-spacing:.5px;direction:ltr;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;max-width:100%}
+  .bill #billv{flex:1 1 auto;min-width:0;overflow-wrap:anywhere}
+  .bill button{flex:0 0 auto;padding:5px 10px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--text);font-size:12px}
   .steps{font-size:13px;color:var(--muted);line-height:1.9;margin:10px 0 0;padding-inline-start:18px}
-  .note{font-size:12px;color:var(--warn);margin-top:8px}
+  .note{font-size:12px;color:var(--warn);margin-top:8px;overflow-wrap:anywhere}
+  /* mobile */
+  @media (max-width:480px){
+    header{padding:10px 12px;gap:8px}
+    header h2{font-size:14px}
+    nav{padding:8px 10px;gap:5px}
+    nav button{padding:7px 12px;font-size:13px}
+    main{padding:12px 10px 60px}
+    .panel{padding:12px}
+    td{padding:8px 6px}
+    td.k{width:42%;font-size:12px}
+    .fee-big{font-size:26px}
+    .invoice{padding:12px}
+    .qr-wrap{gap:12px;justify-content:center}
+    .qr-info{flex-basis:100%}
+    .bill{font-size:18px}
+    .steps{padding-inline-start:16px}
+    pre{font-size:11px}
+  }
 </style>
 </head>
 <body>
@@ -321,7 +341,7 @@ async function payWithShamcash(iv, phone, slot, btn){
     slot.innerHTML = `
       <div class="qr-wrap">
         <div class="qr-box"><img alt="ShamCash QR" src="${qr}"></div>
-        <div>
+        <div class="qr-info">
           <div style="color:var(--muted);font-size:13px;margin-bottom:6px">رقم فاتورة شام كاش</div>
           <div class="bill"><span id="billv">${esc(bill)}</span>
             <button type="button" id="copyBill">نسخ</button></div>
